@@ -123,6 +123,8 @@
 
   .toast{position:absolute;left:50%;bottom:100px;transform:translateX(-50%) translateY(10px);z-index:60;background:var(--ink);color:var(--surface);font-size:11.5px;font-weight:700;padding:10px 18px;border-radius:22px;box-shadow:0 10px 30px -8px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;max-width:82%;text-align:center;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* hide-mock-statusbar */ .statusbar{display:none !important;}
 </style>
 </head>
 <body>
@@ -174,14 +176,13 @@
     <div class="field rise"><label for="reason">Clinical reason for referral</label><textarea id="reason" placeholder="Brief history, findings and what you'd like the specialist to do…"></textarea></div>
 
     <!-- 4. documents -->
-    <div class="sec-lbl rise"><span class="n">4</span>Share documents</div>
-    <label class="uploader rise" for="fileIn">
-      <input type="file" id="fileIn" accept="image/*,.pdf" multiple>
-      <span class="ui"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span>
-      <div class="ut">Attach reports</div>
-      <div class="us">Labs, imaging, prescriptions · PDF or images</div>
-    </label>
-    <div class="attached" id="attached"></div>
+    <div class="sec-lbl rise"><span class="n">4</span>Attach records</div>
+    <div class="search rise" style="margin-bottom:9px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.7" y2="16.7"/></svg>
+      <input id="docSearch2" placeholder="Search patient records to attach…">
+    </div>
+    <div class="rec-count" id="recCount">0 selected</div>
+    <div class="reclist rise" id="reclist"></div>
 
     <!-- consent -->
     <div class="consent rise on" id="consent">
