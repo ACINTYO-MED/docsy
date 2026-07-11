@@ -176,7 +176,7 @@
   try{ const t=localStorage.getItem('cmeTheme')||'blue'; if(t&&t!=='classical') document.documentElement.setAttribute('data-theme',t); }catch(e){}
   function toast(m){ let t=document.getElementById('toast'); if(!t){ t=document.createElement('div'); t.id='toast'; t.className='toast'; document.querySelector('.phone').appendChild(t); } t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1400); }
   const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  document.getElementById('back').addEventListener('click', ()=>{ history.length>1?history.back():location.href='cme.html'; });
+  document.getElementById('back').addEventListener('click', ()=>{ location.href='cme.html'; });
   // pending accreditation badge (localStorage submissions + 2 seeded pending)
   try{ var ar=JSON.parse(localStorage.getItem('accreditationRequests')||'[]'); var pend=ar.filter(r=>r.status==='pending'||r.status==='changes').length + 2; var ab=document.getElementById('accBadge'); if(pend>0){ ab.textContent=pend+' pending'; ab.hidden=false; } }catch(e){}
 

@@ -26,18 +26,21 @@
   .search input::placeholder{color:var(--muted);}
   .search input:focus{outline:none;border-color:var(--brand);}
 
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-  .gcard{position:relative;display:flex;flex-direction:column;gap:10px;background:var(--soft1);border:1px solid transparent;border-radius:16px;padding:13px;min-height:80px;text-decoration:none;color:inherit;cursor:pointer;transition:transform .18s cubic-bezier(.22,1,.36,1), border-color .18s;}
-  .gcard:nth-child(4n+2),.gcard:nth-child(4n+3){background:var(--soft2);}
-  .gcard:hover{transform:translateY(-3px);border-color:var(--brand);}
-  .gcard:active{transform:scale(.985);}
-  .gcard .gi{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:var(--brand);background:rgba(255,255,255,.55);}
-  [data-theme="dark"] .gcard .gi{background:rgba(255,255,255,.08);}
-  .gcard .gi svg{width:18px;height:18px;}
-  .gcard .gn{font-size:12.5px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;line-height:1.2;}
-  .gcard .gc{font-size:9px;color:var(--muted);margin-top:3px;}
+  .count-lbl{font-size:10px;font-weight:700;color:var(--muted);margin:0 0 14px;text-transform:uppercase;letter-spacing:.06em;}
 
-  .empty{text-align:center;color:var(--muted);font-size:11px;padding:40px 20px;grid-column:1/-1;}
+  .spec-list{display:flex;flex-direction:column;gap:8px;}
+  .srow{position:relative;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;text-decoration:none;color:inherit;cursor:pointer;transition:transform .16s cubic-bezier(.22,1,.36,1), border-color .16s, box-shadow .16s;}
+  .srow:hover{transform:translateY(-2px);border-color:var(--brand);box-shadow:0 10px 22px -14px rgba(0,0,0,.28);}
+  .srow:active{transform:scale(.99);}
+  .srow .si{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--brand);background:var(--brand-soft);flex:0 0 auto;font-size:14px;font-weight:800;font-family:var(--display);}
+  .srow .si svg{width:19px;height:19px;}
+  .srow .sm{flex:1;min-width:0;}
+  .srow .sn{font-size:12.5px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;}
+  .srow .sc{font-size:9.5px;color:var(--muted);margin-top:2px;}
+  .srow .chev{color:var(--muted);flex:0 0 auto;transition:transform .16s, color .16s;}
+  .srow:hover .chev{transform:translateX(2px);color:var(--brand);}
+
+  .empty{text-align:center;color:var(--muted);font-size:11px;padding:40px 20px;}
 
   /* hide-mock-statusbar */ .statusbar{display:none !important;}
 </style>
@@ -64,7 +67,8 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.7" y2="16.7"/></svg>
       <input id="specSearch" placeholder="Search specialties…" autocomplete="off">
     </div>
-    <div class="grid rise" id="grid"></div>
+    <div class="count-lbl rise" id="countLbl"></div>
+    <div class="spec-list rise" id="grid"></div>
   </div>
 
   <div class="home-ind"></div>
@@ -74,7 +78,7 @@
   (function(){ const ua=navigator.userAgent||''; const isIOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1); const isAndroid=/Android/.test(ua); document.documentElement.setAttribute('data-os', isIOS?'ios':isAndroid?'android':'other'); })();
   try{ const t=localStorage.getItem('cmeTheme')||'blue'; if(t&&t!=='classical') document.documentElement.setAttribute('data-theme',t); }catch(e){}
   const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  document.getElementById('back').addEventListener('click', ()=>{ history.length>1?history.back():location.href='explore.html'; });
+  document.getElementById('back').addEventListener('click', ()=>{ location.href='explore.html'; });
 
   const heartIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.5-1.5 3-3.4 3-5.5A4.5 4.5 0 0 0 12 5 4.5 4.5 0 0 0 2 8.5C2 12 5 15 12 21c2-1.7 3.7-3.2 5-4.5"/></svg>';
   const dropIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6 6 11a6 6 0 0 1-12 0c0-5 6-11 6-11Z"/></svg>';
@@ -82,7 +86,6 @@
   const brainIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 5 3 3 0 0 0 5 1V4a3 3 0 0 0-3-1Z"/><path d="M15 3a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 5 3 3 0 0 1-5 1"/></svg>';
   const lungsIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M9 13c0 4-1 7-4 7-2 0-3-2-3-5 0-4 2-7 4-8"/><path d="M15 13c0 4 1 7 4 7 2 0 3-2 3-5 0-4-2-7-4-8"/></svg>';
   const boneIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6a2 2 0 1 0-2 2l6 6a2 2 0 1 0 2 2l6-6a2 2 0 1 0-2-2 2 2 0 1 0-2-2l-4 4-4-4a2 2 0 1 0 0 0Z"/></svg>';
-  const crossIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v8M8 12h8"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg>';
 
   const specs = [
     {n:'Cardiology', c:128, i:heartIco},
@@ -91,43 +94,46 @@
     {n:'Neurology', c:76, i:brainIco},
     {n:'Pulmonology', c:58, i:lungsIco},
     {n:'Rheumatology', c:41, i:boneIco},
-    {n:'Gastroenterology', c:52, i:crossIco},
-    {n:'Dermatology', c:47, i:crossIco},
-    {n:'Psychiatry', c:39, i:crossIco},
-    {n:'Ophthalmology', c:33, i:crossIco},
-    {n:'Urology', c:36, i:crossIco},
-    {n:'Radiology', c:44, i:crossIco},
-    {n:'Anesthesiology', c:29, i:crossIco},
+    {n:'Gastroenterology', c:52},
+    {n:'Dermatology', c:47},
+    {n:'Psychiatry', c:39},
+    {n:'Ophthalmology', c:33},
+    {n:'Urology', c:36},
+    {n:'Radiology', c:44},
+    {n:'Anesthesiology', c:29},
     {n:'Orthopaedics', c:63, i:boneIco},
-    {n:'Pediatrics', c:71, i:crossIco},
-    {n:'Neonatology', c:22, i:crossIco},
-    {n:'Gynaecology', c:59, i:crossIco},
-    {n:'ENT', c:31, i:crossIco},
-    {n:'General Medicine', c:88, i:crossIco},
-    {n:'Internal Medicine', c:97, i:crossIco},
-    {n:'Infectious Diseases', c:45, i:crossIco},
-    {n:'Hematology', c:28, i:crossIco},
-    {n:'Immunology & Allergy', c:19, i:crossIco},
-    {n:'Geriatrics', c:24, i:crossIco},
-    {n:'Emergency Medicine', c:37, i:crossIco},
-    {n:'Family Medicine', c:42, i:crossIco},
-    {n:'Pathology', c:21, i:crossIco},
-    {n:'Plastic Surgery', c:18, i:crossIco},
-    {n:'Critical Care', c:34, i:crossIco},
-    {n:'Sports Medicine', c:16, i:crossIco},
-    {n:'Pain Medicine', c:14, i:crossIco},
-    {n:'Sleep Medicine', c:12, i:crossIco},
-    {n:'Palliative Care', c:15, i:crossIco}
+    {n:'Pediatrics', c:71},
+    {n:'Neonatology', c:22},
+    {n:'Gynaecology', c:59},
+    {n:'ENT', c:31},
+    {n:'General Medicine', c:88},
+    {n:'Internal Medicine', c:97},
+    {n:'Infectious Diseases', c:45},
+    {n:'Hematology', c:28},
+    {n:'Immunology & Allergy', c:19},
+    {n:'Geriatrics', c:24},
+    {n:'Emergency Medicine', c:37},
+    {n:'Family Medicine', c:42},
+    {n:'Pathology', c:21},
+    {n:'Plastic Surgery', c:18},
+    {n:'Critical Care', c:34},
+    {n:'Sports Medicine', c:16},
+    {n:'Pain Medicine', c:14},
+    {n:'Sleep Medicine', c:12},
+    {n:'Palliative Care', c:15}
   ];
 
   const grid = document.getElementById('grid');
+  const countLbl = document.getElementById('countLbl');
   function render(q){
     q = (q||'').trim().toLowerCase();
     const rows = specs.filter(s=>!q || s.n.toLowerCase().includes(q));
+    countLbl.textContent = rows.length + (q ? ' match'+(rows.length===1?'':'es') : ' specialties');
     grid.innerHTML = rows.length ? rows.map(s=>`
-      <a class="gcard" href="speakers.html?type=specialty&specialty=${encodeURIComponent(s.n)}">
-        <span class="gi">${s.i}</span>
-        <div><div class="gn">${esc(s.n)}</div><div class="gc">${s.c} CMEs</div></div>
+      <a class="srow" href="speakers.html?type=specialty&specialty=${encodeURIComponent(s.n)}">
+        <span class="si">${s.i || esc(s.n.charAt(0))}</span>
+        <div class="sm"><div class="sn">${esc(s.n)}</div><div class="sc">${s.c} CMEs</div></div>
+        <span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>
       </a>`).join('') : `<div class="empty">No specialty matches "${esc(q)}".</div>`;
   }
   render('');

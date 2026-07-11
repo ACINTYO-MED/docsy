@@ -47,13 +47,20 @@
   .chip:active{transform:scale(.96);}
   .chip .ci{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;color:var(--brand);background:var(--brand-soft);}
   .chip .ci svg{width:14px;height:14px;}
-  #chips.chips{gap:7px;}
-  #chips .chip{gap:6px;min-height:32px;border-radius:11px;padding:6px 10px;font-size:10.5px;}
-  #chips .chip .ci{width:19px;height:19px;border-radius:7px;}
-  #chips .chip .ci svg{width:11px;height:11px;}
 
-  /* section label + header */
-  .lbl{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:24px 0 12px;}
+  /* browse by specialty — icon-tile cards */
+  .spec-row{display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin:0 -2px;}
+  .spec-row::-webkit-scrollbar{display:none;}
+  .spec-card{flex:0 0 72px;background:var(--soft1);border:1px solid transparent;border-radius:16px;padding:12px 6px 10px;text-align:center;text-decoration:none;color:inherit;cursor:pointer;transition:transform .18s cubic-bezier(.22,1,.36,1), border-color .18s;}
+  .spec-card:nth-child(2n){background:var(--soft2);}
+  .spec-card:hover{transform:translateY(-3px);border-color:var(--brand);}
+  .spec-card:active{transform:scale(.96);}
+  .spec-card .si{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.55);color:var(--brand);display:grid;place-items:center;margin:0 auto 8px;}
+  [data-theme="dark"] .spec-card .si{background:rgba(255,255,255,.08);}
+  .spec-card .si svg{width:19px;height:19px;}
+  .spec-card .sn{font-size:10px;font-weight:700;line-height:1.25;}
+
+  /* section header */
   .sec{display:flex;align-items:baseline;justify-content:space-between;margin:24px 0 12px;}
   .sec h2{font-size:15px;font-weight:800;font-family:var(--display);letter-spacing:-.02em;}
   .sec a{font-size:10px;font-weight:700;color:var(--brand);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:3px;transition:transform .18s cubic-bezier(.22,1,.36,1), opacity .18s;}
@@ -407,8 +414,8 @@
     <div class="rec rise" id="recommended"></div>
 
     <!-- Browse specialties -->
-    <div class="lbl rise">Browse by specialty</div>
-    <div class="chips rise" id="chips"></div>
+    <div class="sec rise"><h2>Browse by specialty</h2><a href="specialties.html">See all<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></a></div>
+    <div class="spec-row rise" id="specRow"></div>
 
     <!-- Upcoming -->
     <div class="sec rise"><h2>Upcoming CMEs</h2><a href="speakers.html?type=upcoming">See all<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></a></div>
@@ -736,8 +743,8 @@
     {n:'Cardiology', i:'heart'},{n:'Endocrinology', i:'drop'},{n:'Diabetes', i:'activity'},
     {n:'Neurology', i:'brain'},{n:'Nephrology', i:'drop'},{n:'Rheumatology', i:'bone'}
   ];
-  document.getElementById('chips').innerHTML = specialties.map(s=>`
-    <a class="chip" href="speakers.html?type=specialty&specialty=${encodeURIComponent(s.n)}">${'<span class="ci">'+ic[s.i]+'</span>'}${s.n}</a>`).join('');
+  document.getElementById('specRow').innerHTML = specialties.map(s=>`
+    <a class="spec-card" href="speakers.html?type=specialty&specialty=${encodeURIComponent(s.n)}"><span class="si">${ic[s.i]}</span><div class="sn">${s.n}</div></a>`).join('');
 
   const chev = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>';
   const pTag = (f,price) => f ? '<span class="ptag free">Free</span>' : '<span class="ptag paid">'+(price||'Paid')+'</span>';

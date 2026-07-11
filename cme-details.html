@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
   @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
   .statusbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 26px 4px;font-size:15px;font-weight:700;color:var(--ink);}
   .statusbar .sys{display:flex;align-items:center;gap:7px;} .statusbar svg{fill:currentColor;stroke:currentColor;}
@@ -21,15 +22,35 @@
   .scroll::-webkit-scrollbar{width:0;}
   .wrap{padding:0 18px;}
 
-  .hero{margin:6px 0 14px;border-radius:20px;padding:20px 18px;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--d1),var(--d2) 55%,var(--d3));color:#fff;}
-  .hero::after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,var(--glow),transparent 70%);}
-  .hero .badges{display:flex;gap:6px;flex-wrap:wrap;position:relative;z-index:1;}
-  .hbadge{font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:20px;background:rgba(255,255,255,.16);}
-  .hero h1{position:relative;z-index:1;font-size:19px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;line-height:1.25;margin-top:10px;}
-  .hero .horg{position:relative;z-index:1;font-size:10.5px;color:rgba(255,255,255,.75);margin-top:6px;}
+  .banner{margin:6px 0 4px;position:relative;overflow:hidden;border-radius:16px;padding:16px;background:var(--soft1);border:1px solid var(--line);}
+  .status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.03em;}
+  .status-pill .d{width:6px;height:6px;border-radius:50%;}
+  .status-pill.live{background:rgba(224,106,106,.12);border:1px solid rgba(224,106,106,.28);color:#c0464a;}
+  .status-pill.live .d{background:#c0464a;animation:pulse 1.4s infinite;}
+  .status-pill.upcoming{background:var(--brand-soft);color:var(--brand);border:1px solid transparent;}
+  .status-pill.upcoming .d{background:var(--brand);}
+  .status-pill.completed{background:var(--chip);color:var(--muted);border:1px solid transparent;}
+  .status-pill.completed .d{background:var(--muted);}
+  .banner h1{font-size:18px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;line-height:1.2;margin:10px 0 9px;}
+  .banner .meta{display:flex;gap:14px;font-size:10px;margin-bottom:10px;flex-wrap:wrap;color:var(--muted);}
+  .banner .meta span{display:inline-flex;align-items:center;gap:5px;}
+  .banner .meta svg{width:12px;height:12px;color:var(--brand);}
+  .banner .badges{display:flex;gap:7px;flex-wrap:wrap;}
+  .bbadge{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:20px;font-size:9.5px;font-weight:800;background:var(--brand-soft);color:var(--brand);}
+  .bbadge svg{width:12px;height:12px;}
+  .horg{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted);margin-top:10px;}
+  .horg svg{width:13px;height:13px;color:var(--brand);}
+
+  .tabs{display:flex;gap:16px;border-bottom:1px solid var(--line);margin:14px 0 0;overflow-x:auto;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{flex:0 0 auto;min-height:40px;display:inline-flex;align-items:center;gap:5px;padding:9px 1px;font-size:11px;font-weight:700;color:var(--muted);background:none;border:none;cursor:pointer;position:relative;white-space:nowrap;}
+  .tab:active{transform:scale(.96);}
+  .tab.active{color:var(--brand);}
+  .tab.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2.5px;background:var(--brand);border-radius:3px;}
 
   .sec{margin:20px 0 10px;display:flex;align-items:baseline;justify-content:space-between;}
   .sec h2{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .sec:first-child{margin-top:16px;}
 
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;}
   .card+.card{margin-top:10px;}
@@ -43,14 +64,54 @@
   .chips{display:flex;flex-wrap:wrap;gap:7px;}
   .chip{font-size:10.5px;font-weight:700;color:var(--brand);background:var(--brand-soft);padding:6px 12px;border-radius:20px;}
 
+  .info-chips{display:flex;gap:8px;margin-top:2px;flex-wrap:wrap;}
+  .ichip{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;font-weight:600;color:var(--slate-700);background:var(--card);border:1px solid var(--line);padding:8px 11px;border-radius:12px;}
+  .ichip svg{color:var(--brand);width:13px;height:13px;}
+
   .bio{font-size:11.5px;line-height:1.65;color:var(--slate-700);}
 
-  .spk{display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-bottom:1px solid var(--line);}
+  /* key speakers preview strip */
+  .ks-head{display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px;}
+  .ks-head h2{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .ks-head a{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--brand);cursor:pointer;}
+  .ks-row{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 4px;margin:0 -2px;}
+  .ks-row::-webkit-scrollbar{display:none;}
+  .ks-card{flex:0 0 100px;background:var(--soft1);border:1px solid transparent;border-radius:16px;padding:11px 8px 10px;text-align:center;cursor:pointer;transition:transform .18s cubic-bezier(.22,1,.36,1), border-color .18s;}
+  .ks-card:hover{transform:translateY(-3px);border-color:var(--brand);}
+  .ks-card:nth-child(2n){background:var(--soft2);}
+  .ks-card img,.ks-card .fb{width:44px;height:44px;border-radius:50%;object-fit:cover;margin:0 auto 8px;background:var(--chip);}
+  .ks-card .fb{display:grid;place-items:center;color:var(--brand);font-weight:800;font-size:14px;font-family:var(--display);}
+  .ks-card .ks-name{font-size:10.5px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ks-card .ks-role{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ks-card .ks-tag{display:inline-flex;align-items:center;gap:2px;margin-top:6px;font-size:8.5px;font-weight:800;color:var(--brand);}
+
+  /* agenda timeline */
+  .timeline{display:flex;flex-direction:column;}
+  .tl-item{display:grid;grid-template-columns:50px 16px 1fr;gap:10px;align-items:stretch;padding-bottom:10px;}
+  .tl-times{display:flex;flex-direction:column;gap:2px;padding-top:13px;text-align:right;}
+  .tl-start{font-size:10px;font-weight:800;color:var(--ink);letter-spacing:-.02em;}
+  .tl-end{font-size:9.5px;font-weight:500;color:var(--muted);}
+  .tl-rail{position:relative;justify-self:center;width:16px;}
+  .tl-rail .d{position:absolute;left:50%;top:15px;transform:translateX(-50%);z-index:1;width:11px;height:11px;border-radius:50%;background:var(--card);border:3px solid var(--brand);}
+  .tl-item.live .tl-rail .d{background:var(--brand);box-shadow:0 0 0 4px var(--brand-soft);animation:pulseDot 1.6s infinite;}
+  @keyframes pulseDot{0%,100%{box-shadow:0 0 0 4px var(--brand-soft)}50%{box-shadow:0 0 0 8px transparent}}
+  .tl-body{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;align-items:flex-start;gap:8px;box-shadow:0 1px 2px rgba(16,24,40,.03);}
+  .tl-item.live .tl-body{border-color:var(--brand);background:linear-gradient(180deg,var(--brand-soft),var(--card));}
+  .tl-main{flex:1;min-width:0;}
+  .tl-title{font-size:12px;font-weight:700;line-height:1.3;margin-bottom:6px;letter-spacing:-.01em;}
+  .tl-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .tl-by{font-size:10px;color:var(--muted);font-weight:500;display:inline-flex;align-items:center;gap:5px;}
+  .tl-by svg{width:12px;height:12px;color:var(--brand);}
+
+  .spk{display:flex;align-items:flex-start;gap:11px;padding:10px 11px;border-bottom:1px solid var(--line);border-radius:12px;}
+  .spk.intl{background:var(--brand-soft);border-bottom-color:transparent;}
   .spk:last-child{border-bottom:none;}
   .spk img,.spk .init{width:38px;height:38px;border-radius:50%;object-fit:cover;background:var(--chip);flex:0 0 auto;}
   .spk .init{display:grid;place-items:center;background:var(--brand-soft);color:var(--brand);font-size:14px;font-weight:800;font-family:var(--display);}
   .spk .sm{flex:1;min-width:0;} .spk .sm b{font-size:12px;font-weight:800;font-family:var(--display);display:block;}
   .spk .sm .role{font-size:9.5px;color:var(--muted);margin-top:1px;}
+  .spk .sm .intl-badge{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;color:var(--brand);margin-top:3px;}
+  .spk .sm .intl-badge svg{width:10px;height:10px;}
   .spk .sm .desc{font-size:10.5px;color:var(--slate-700);margin-top:5px;line-height:1.5;}
 
   .stat-row{display:flex;gap:9px;}
@@ -153,22 +214,55 @@
     return all.find(p=>p.id===id) || null;
   }
 
+  function computeStatus(p){
+    if(!p.eventStartDate) return 'upcoming';
+    const today=new Date().toISOString().slice(0,10);
+    const end=p.eventEndDate || p.eventStartDate;
+    if(today < p.eventStartDate) return 'upcoming';
+    if(today > end) return 'completed';
+    return 'live';
+  }
+
+  function switchTab(key){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===key));
+    document.querySelectorAll('.tabpanel').forEach(pnl=>{ pnl.hidden = pnl.dataset.panel !== key; });
+    document.getElementById('scroll').scrollTop = 0;
+  }
+
   function render(p){
     const scroll=document.getElementById('scroll');
     document.getElementById('foot').hidden=false;
     const isRec = p.format==='Recorded';
     const locLabel = p.format==='Offline' ? 'Venue' : (isRec ? 'Recording link' : 'Meeting link');
     const locIcon = p.format==='Offline' ? pinIco : globeIco;
+    const status = computeStatus(p);
+    const statusLabel = {live:'Live now', upcoming:'Upcoming', completed:'Completed'}[status];
+    const hasSpeakers = p.speakers && p.speakers.length;
+
+    const hasAgenda = !isRec && (p.eventStartDate || p.timezone || p.location);
 
     let html = `<div class="wrap">
-      <div class="hero rise">
-        <div class="badges">
-          <span class="hbadge">${esc(p.format||'Online')}</span>
-          ${p.accredit || p.accrBody ? `<span class="hbadge">Accredited</span>` : ''}
-        </div>
+      <div class="banner rise">
+        <span class="status-pill ${status}"><span class="d"></span>${statusLabel}</span>
         <h1>${esc(p.title || 'Untitled program')}</h1>
-        ${p.org ? `<div class="horg">${orgIco} Organized by ${esc(p.org)}</div>` : ''}
-      </div>`;
+        ${!isRec && p.eventStartDate ? `<div class="meta">
+          <span>${calIco}${fmtDate(p.eventStartDate)}${p.eventEndDate && p.eventEndDate!==p.eventStartDate ? ' – '+fmtDate(p.eventEndDate) : ''}</span>
+          ${p.eventStartTime ? `<span>${clockIco}${fmtTime(p.eventStartTime)}${p.eventEndTime ? ' – '+fmtTime(p.eventEndTime) : ''}</span>` : ''}
+        </div>` : ''}
+        <div class="badges">
+          <span class="bbadge">${locIcon}${esc(p.format||'Online')}</span>
+          ${p.accredit || p.accrBody ? `<span class="bbadge">${certIco}Accredited</span>` : ''}
+        </div>
+        ${p.org ? `<div class="horg">${orgIco}Organized by ${esc(p.org)}</div>` : ''}
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="about">About</button>
+        ${hasAgenda ? `<button class="tab" data-tab="agenda">Agenda</button>` : ''}
+        ${hasSpeakers ? `<button class="tab" data-tab="speakers">Speakers (${p.speakers.length})</button>` : ''}
+      </div>
+
+      <div class="tabpanel" data-panel="about">`;
 
     if(p.specialties && p.specialties.length){
       html += `<div class="sec"><h2>Specialties</h2></div><div class="chips rise">${p.specialties.map(s=>`<span class="chip">${esc(s)}</span>`).join('')}</div>`;
@@ -178,20 +272,22 @@
       html += `<div class="sec"><h2>About</h2></div><div class="card rise"><p class="bio">${esc(p.description)}</p></div>`;
     }
 
-    if(!isRec){
-      html += `<div class="sec"><h2>Schedule</h2></div><div class="card rise">`;
-      if(p.eventStartDate) html += `<div class="kv"><span class="ki">${calIco}</span><div class="kt"><b>Event</b><span>${fmtDate(p.eventStartDate)}${p.eventEndDate && p.eventEndDate!==p.eventStartDate ? ' – '+fmtDate(p.eventEndDate) : ''}${p.eventStartTime ? ' · '+fmtTime(p.eventStartTime) : ''}${p.eventEndTime ? ' – '+fmtTime(p.eventEndTime) : ''}</span></div></div>`;
-      if(p.regStart || p.regEnd) html += `<div class="kv"><span class="ki">${clockIco}</span><div class="kt"><b>Registration window</b><span>${p.regStart?fmtDate(p.regStart):'Open'} ${p.regEnd?'– '+fmtDate(p.regEnd):''}</span></div></div>`;
-      if(p.timezone) html += `<div class="kv"><span class="ki">${globeIco}</span><div class="kt"><b>Timezone</b><span>${esc(p.timezone)}</span></div></div>`;
-      if(p.location) html += `<div class="kv"><span class="ki">${locIcon}</span><div class="kt"><b>${locLabel}</b><span>${esc(p.location)}</span></div></div>`;
-      html += `</div>`;
-    }
+    html += `<div class="info-chips rise" style="margin-top:${(p.specialties&&p.specialties.length)||p.description?'16px':'0'}">
+      <span class="ichip">${locIcon}${esc(p.format||'Online')}</span>
+      ${p.paid ? `<span class="ichip">${feeIco}₹${esc(p.fee||'—')} per seat</span>` : `<span class="ichip">${feeIco}Free to attend</span>`}
+      ${p.timezone && !isRec ? `<span class="ichip">${globeIco}${esc(p.timezone)}</span>` : ''}
+    </div>`;
 
-    if(p.speakers && p.speakers.length){
-      html += `<div class="sec"><h2>Speakers</h2></div><div class="card rise">${p.speakers.map(s=>`
-        <div class="spk">
-          ${s.img ? `<img src="${s.img}" alt="">` : `<span class="init">${esc(initials(s.n))}</span>`}
-          <div class="sm"><b>${esc(s.n)}</b>${s.r?`<div class="role">${esc(s.r)}</div>`:''}${s.desc?`<div class="desc">${esc(s.desc)}</div>`:''}</div>
+    if(hasSpeakers){
+      html += `<div class="ks-head"><h2>Key speakers</h2><a data-goto="speakers">See all
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </a></div>
+      <div class="ks-row rise">${p.speakers.map(s=>`
+        <div class="ks-card" data-goto="speakers">
+          ${s.img ? `<img src="${s.img}" alt="">` : `<div class="fb">${esc(initials(s.n))}</div>`}
+          <div class="ks-name">${esc(s.n)}</div>
+          ${s.r?`<div class="ks-role">${esc(s.r)}</div>`:''}
+          ${s.intl?`<div class="ks-tag">${globeIco}Int'l</div>`:''}
         </div>`).join('')}</div>`;
     }
 
@@ -244,8 +340,51 @@
         </div>`).join('')}</div>`;
     }
 
-    html += `</div>`;
+    html += `</div>`; // end about tabpanel
+
+    if(hasAgenda){
+      const startLabel = p.eventStartTime ? fmtTime(p.eventStartTime) : 'TBD';
+      const endLabel = p.eventEndTime ? fmtTime(p.eventEndTime) : '';
+      html += `<div class="tabpanel" data-panel="agenda" hidden>
+        <div class="sec" style="margin-top:16px"><h2>Agenda</h2></div>
+        <div class="timeline rise">
+          <div class="tl-item ${status==='live'?'live':''}">
+            <div class="tl-times"><div class="tl-start">${esc(startLabel)}</div>${endLabel?`<div class="tl-end">${esc(endLabel)}</div>`:''}</div>
+            <div class="tl-rail"><span class="d"></span></div>
+            <div class="tl-body">
+              <div class="tl-main">
+                <div class="tl-title">${esc(p.title || 'Untitled program')}</div>
+                <div class="tl-meta">
+                  ${p.eventStartDate ? `<span class="tl-by">${calIco}${fmtDate(p.eventStartDate)}${p.eventEndDate && p.eventEndDate!==p.eventStartDate ? ' – '+fmtDate(p.eventEndDate) : ''}</span>` : ''}
+                  ${p.location ? `<span class="tl-by">${locIcon}${esc(p.location)}</span>` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card rise" style="margin-top:14px">
+          ${p.regStart || p.regEnd ? `<div class="kv"><span class="ki">${clockIco}</span><div class="kt"><b>Registration window</b><span>${p.regStart?fmtDate(p.regStart):'Open'} ${p.regEnd?'– '+fmtDate(p.regEnd):''}</span></div></div>` : ''}
+          ${p.timezone ? `<div class="kv"><span class="ki">${globeIco}</span><div class="kt"><b>Timezone</b><span>${esc(p.timezone)}</span></div></div>` : ''}
+          ${p.location ? `<div class="kv"><span class="ki">${locIcon}</span><div class="kt"><b>${locLabel}</b><span>${esc(p.location)}</span></div></div>` : ''}
+        </div>
+      </div>`;
+    }
+
+    if(hasSpeakers){
+      html += `<div class="tabpanel" data-panel="speakers" hidden>
+        <div class="sec" style="margin-top:16px"><h2>Speakers</h2></div>
+        <div class="card rise">${p.speakers.map(s=>`
+        <div class="spk${s.intl?' intl':''}">
+          ${s.img ? `<img src="${s.img}" alt="">` : `<span class="init">${esc(initials(s.n))}</span>`}
+          <div class="sm"><b>${esc(s.n)}</b>${s.r?`<div class="role">${esc(s.r)}</div>`:''}${s.intl?`<div class="intl-badge">${globeIco}International speaker</div>`:''}${s.desc?`<div class="desc">${esc(s.desc)}</div>`:''}</div>
+        </div>`).join('')}</div>
+      </div>`;
+    }
+
+    html += `</div>`; // end wrap
     scroll.innerHTML = html;
+    document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>switchTab(t.dataset.tab)));
+    document.querySelectorAll('[data-goto]').forEach(el=>el.addEventListener('click', ()=>switchTab(el.dataset.goto)));
   }
 
   function renderEmpty(){

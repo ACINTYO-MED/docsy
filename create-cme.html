@@ -105,11 +105,17 @@
   .mat .rm{width:30px;height:30px;border-radius:9px;border:none;background:var(--chip);color:var(--muted);cursor:pointer;display:grid;place-items:center;flex:0 0 auto;}
   .mat .rm:hover{color:var(--brand);} .mat .rm svg{width:13px;height:13px;}
   .spk-list{display:flex;flex-direction:column;gap:9px;}
-  .spk{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:9px 11px;}
+  .spk{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:9px 11px;transition:background .16s, border-color .16s;}
+  .spk.intl{background:var(--brand-soft);border-color:var(--brand);}
   .spk-top{display:flex;align-items:center;gap:11px;}
   .spk img{width:38px;height:38px;border-radius:50%;object-fit:cover;background:var(--chip);flex:0 0 auto;}
   .spk .nm{flex:1;min-width:0;} .spk .nm b{font-size:12px;font-weight:800;font-family:var(--display);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .spk .nm span{font-size:9.5px;color:var(--muted);}
+  .spk .nm .intl-badge{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;color:var(--brand);}
+  .spk .nm .intl-badge svg{width:10px;height:10px;}
+  .intl-tgl{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--chip);color:var(--muted);cursor:pointer;display:grid;place-items:center;flex:0 0 auto;transition:background .16s, color .16s, border-color .16s;}
+  .intl-tgl svg{width:14px;height:14px;}
+  .intl-tgl.on{background:var(--brand);border-color:var(--brand);color:#fff;}
   .spk .rm{width:32px;height:32px;border-radius:9px;border:none;background:var(--chip);color:var(--muted);cursor:pointer;display:grid;place-items:center;flex:0 0 auto;}
   .spk .rm:hover{color:var(--brand);} .spk .rm svg{width:14px;height:14px;}
   .spk-desc{width:100%;margin-top:8px;min-height:40px;background:var(--chip);border:1px solid transparent;border-radius:10px;padding:8px 10px;font-size:10.5px;font-family:inherit;color:var(--ink);resize:vertical;line-height:1.5;}
@@ -607,22 +613,24 @@
     {n:'Dr. Kabir Singh',r:'Pulmonology',img:'https://randomuser.me/api/portraits/men/22.jpg'},
     {n:'Dr. Anjali Desai',r:'Rheumatology',img:'https://randomuser.me/api/portraits/women/56.jpg'}
   ];
-  let speakers=[{...pool[0], desc:'', custom:false}];
+  let speakers=[{...pool[0], desc:'', custom:false, intl:false}];
   if(draftData && draftData.speakers && draftData.speakers.length){
-    speakers=draftData.speakers.map(s=>({n:s.n, r:s.r||'', img:s.img||'', desc:s.desc||'', custom:!!s.custom}));
+    speakers=draftData.speakers.map(s=>({n:s.n, r:s.r||'', img:s.img||'', desc:s.desc||'', custom:!!s.custom, intl:!!s.intl}));
   }
   let spkPickerOpen=false;
   const xIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
   const plusIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
   const checkIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 5 13"/></svg>';
+  const globeIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.6 6 3.6 9s-1.1 6.5-3.6 9c-2.5-2.5-3.6-6-3.6-9s1.1-6.5 3.6-9Z"/></svg>';
 
   function spkAvatar(s){ return s.img ? `<img src="${s.img}" alt="">` : `<div class="spk-initial">${esc((s.n||'?').replace('Dr. ','').charAt(0).toUpperCase())}</div>`; }
   function renderSpk(){
     document.getElementById('spkList').innerHTML = speakers.map((s,i)=>`
-      <div class="spk">
+      <div class="spk${s.intl?' intl':''}">
         <div class="spk-top">
           ${spkAvatar(s)}
-          <div class="nm"><b>${esc(s.n)}</b><span>${esc(s.r||'Guest speaker')}</span></div>
+          <div class="nm"><b>${esc(s.n)}</b><span>${esc(s.r||'Guest speaker')}</span>${s.intl?`<span class="intl-badge">${globeIco}International</span>`:''}</div>
+          <button type="button" class="intl-tgl${s.intl?' on':''}" data-i="${i}" aria-pressed="${!!s.intl}" title="Mark as international speaker">${globeIco}</button>
           <button class="rm" data-i="${i}" aria-label="Remove">${xIco}</button>
         </div>
         ${s.custom ? `<textarea class="spk-desc" data-i="${i}" placeholder="Add a short description or topic for this speaker…">${esc(s.desc||'')}</textarea>` : ''}
@@ -645,13 +653,15 @@
   function addSpeaker(name){
     if(speakers.some(s=>s.n===name)) return;
     const p=pool.find(p=>p.n===name); if(!p) return;
-    speakers.push({...p, desc:'', custom:false}); renderSpk(); renderSpkResults(); toast(p.n+' added');
+    speakers.push({...p, desc:'', custom:false, intl:false}); renderSpk(); renderSpkResults(); toast(p.n+' added');
   }
   function addCustomSpeaker(name){
     name=name.trim(); if(!name || speakers.some(s=>s.n===name)) return;
-    speakers.push({n:name, r:'', img:'', desc:'', custom:true}); renderSpk(); renderSpkResults(); toast(name+' added');
+    speakers.push({n:name, r:'', img:'', desc:'', custom:true, intl:false}); renderSpk(); renderSpkResults(); toast(name+' added');
   }
   document.getElementById('spkList').addEventListener('click', e=>{
+    const t=e.target.closest('.intl-tgl');
+    if(t){ speakers[+t.dataset.i].intl = !speakers[+t.dataset.i].intl; renderSpk(); return; }
     const b=e.target.closest('.rm'); if(!b) return;
     speakers.splice(+b.dataset.i,1); renderSpk(); if(spkPickerOpen) renderSpkResults();
   });
@@ -758,7 +768,7 @@
       accrBody: val('fAccr'),
       certName: certFile ? certFile.name : (draftData?draftData.certName||'':''),
       location: val('fLoc'),
-      speakers: speakers.map(s=>({n:s.n, r:s.r||'', img:s.img||'', desc:s.desc||'', custom:!!s.custom})),
+      speakers: speakers.map(s=>({n:s.n, r:s.r||'', img:s.img||'', desc:s.desc||'', custom:!!s.custom, intl:!!s.intl})),
       seatsLimited: on('tgSeats'), seats: val('fSeats'), seatsPre: val('fSeatsPre'), seatsPost: val('fSeatsPost'),
       paid: on('tgPaid'), fee: val('fFee'),
       earlyBird: on('tgEarlyBird'), earlyFee: val('fEarlyFee'), earlyDeadline: val('fEarlyDeadline'),
