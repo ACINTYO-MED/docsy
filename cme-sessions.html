@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video sessions — CME</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+  @media (max-width:600px){ body{padding:0;overflow:hidden;justify-content:flex-start;} .phone{border-radius:0;box-shadow:none;transform-origin:top left;} .home-ind{display:none;} .statusbar{display:none;} .topbar{padding-top:max(8px,env(safe-area-inset-top));} }
+
+  .statusbar{display:flex;align-items:center;justify-content:space-between;padding:14px 26px 4px;font-size:15px;font-weight:700;color:var(--ink);}
+  .statusbar .sys{display:flex;align-items:center;gap:7px;} .statusbar svg{fill:currentColor;stroke:currentColor;}
+
+  .scroll{flex:1 1 auto;overflow-y:auto;padding:14px 18px 24px;} .scroll::-webkit-scrollbar{width:0;}
+
+  .subttl{font-size:10px;color:var(--muted);font-weight:600;margin:-2px 2px 0;}
+
+  /* overall progress summary */
+  .prog{display:flex;align-items:center;gap:16px;margin-top:14px;background:var(--soft1);border:1px solid transparent;border-radius:18px;padding:15px 16px;}
+  .ring{position:relative;width:66px;height:66px;flex:0 0 auto;}
+  .ring svg{width:66px;height:66px;transform:rotate(-90deg);}
+  .rt{fill:none;stroke:rgba(0,0,0,.08);stroke-width:8;}
+  .rp{fill:none;stroke:var(--brand);stroke-width:8;stroke-linecap:round;stroke-dasharray:213.6;stroke-dashoffset:213.6;transition:stroke-dashoffset 1s cubic-bezier(.22,1,.36,1);}
+  .ring .rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;}
+  .ring .rc b{font-size:17px;font-weight:800;font-family:var(--display);color:var(--brand);}
+  .ring .rc span{font-size:7px;font-weight:800;letter-spacing:.1em;color:var(--muted);margin-top:2px;}
+  .prog .pm{flex:1;min-width:0;}
+  .prog .pm .l{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+  .prog .pm .v{font-size:14px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;margin-top:4px;}
+  .prog .pm .cr{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;color:var(--gold);background:rgba(176,137,79,.14);padding:4px 10px;border-radius:20px;margin-top:8px;}
+  .prog .pm .cr svg{width:12px;height:12px;}
+
+  .sec{display:flex;align-items:baseline;justify-content:space-between;margin:22px 2px 12px;}
+  .sec h2{font-size:14px;font-weight:800;font-family:var(--display);letter-spacing:-.02em;}
+  .sec .n{font-size:10px;font-weight:700;color:var(--muted);}
+
+  /* video rows */
+  .vids{display:flex;flex-direction:column;gap:10px;}
+  .vid{display:flex;gap:12px;align-items:center;background:var(--soft1);border:1px solid transparent;border-radius:16px;padding:11px;text-decoration:none;color:inherit;cursor:pointer;transition:transform .18s cubic-bezier(.22,1,.36,1), border-color .18s;}
+  .vid:hover{transform:translateY(-2px);border-color:var(--brand);} .vid:active{transform:scale(.99);}
+  .vthumb{position:relative;width:58px;height:58px;border-radius:13px;flex:0 0 auto;display:grid;place-items:center;color:#fff;background:linear-gradient(140deg,var(--g1),var(--g2));}
+  .vthumb svg{width:22px;height:22px;}
+  .vthumb .done{position:absolute;inset:0;border-radius:13px;background:rgba(15,40,25,.55);display:grid;place-items:center;}
+  .vthumb .done svg{width:24px;height:24px;color:#fff;}
+  .vinfo{flex:1;min-width:0;}
+  .vt{font-size:12.5px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;line-height:1.25;}
+  .vm{font-size:9.5px;color:var(--muted);margin-top:3px;display:flex;flex-wrap:wrap;gap:4px 8px;}
+  .vm b{color:var(--gold);font-weight:800;}
+  .vbar{position:relative;height:5px;border-radius:5px;background:var(--chip);margin-top:9px;overflow:hidden;}
+  .vbar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--brand);width:0;transition:width .8s cubic-bezier(.22,1,.36,1);}
+  .vbar i.full{background:var(--green);}
+  .vpct{font-size:9px;font-weight:700;color:var(--muted);margin-top:5px;}
+  .vpct.done{color:var(--green);}
+  .vchev{color:var(--muted);opacity:.5;flex:0 0 auto;} .vchev svg{width:16px;height:16px;}
+
+  .note{margin-top:18px;background:var(--soft1);border-radius:14px;padding:12px 14px;font-size:10px;line-height:1.6;color:var(--muted);display:flex;gap:9px;align-items:flex-start;}
+  .note svg{width:15px;height:15px;flex:0 0 auto;color:var(--brand);margin-top:1px;}
+
+  /* hide-mock-statusbar */ .statusbar{display:none !important;}
+</style>
+  <link rel="stylesheet" href="global.css?v=10">
+</head>
+<body>
+<div class="phone">
+  <div class="statusbar">
+    <span>9:41</span>
+    <div class="sys">
+      <svg width="17" height="13" viewBox="0 0 20 14"><rect x="0" y="9" width="3" height="5" rx="1"/><rect x="5" y="6" width="3" height="8" rx="1"/><rect x="10" y="3" width="3" height="11" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1"/></svg>
+      <svg width="17" height="13" viewBox="0 0 18 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1 4.5C5.5 .5 12.5 .5 17 4.5"/><path d="M4 7.5C6.8 5 11.2 5 14 7.5"/><path d="M7 10.5C8.2 9.4 9.8 9.4 11 10.5"/><circle cx="9" cy="13" r=".6" fill="currentColor" stroke="none"/></svg>
+      <svg width="26" height="14" viewBox="0 0 26 14"><rect x="0.5" y="0.5" width="22" height="13" rx="3.5" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2" y="2" width="18" height="10" rx="2.2" fill="currentColor"/><rect x="23.5" y="4.5" width="2" height="5" rx="1" fill="currentColor" fill-opacity=".4"/></svg>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <button class="back" id="back" aria-label="Back"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <h1 id="pTitle">Video sessions</h1>
+  </div>
+
+  <div class="scroll">
+    <div class="subttl" id="subttl">On-demand sessions · watch to earn CME credits</div>
+
+    <div class="prog rise">
+      <div class="ring">
+        <svg viewBox="0 0 78 78"><circle class="rt" cx="39" cy="39" r="34"/><circle class="rp" id="ring" cx="39" cy="39" r="34"/></svg>
+        <div class="rc"><b id="ringPct">0%</b><span>DONE</span></div>
+      </div>
+      <div class="pm">
+        <div class="l">Program progress</div>
+        <div class="v" id="progLine">0 of 0 sessions completed</div>
+        <div class="cr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/><polyline points="9 12 11.5 14.5 15.5 9.5"/></svg><span id="crLine">0 / 0 CME earned</span></div>
+      </div>
+    </div>
+
+    <div class="sec rise"><h2>Sessions</h2><span class="n" id="secN"></span></div>
+    <div class="vids rise" id="vids"></div>
+
+    <div class="note rise">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-5M12 8h.01"/></svg>
+      Credits are awarded per session once you complete 100% of the video. Progress is saved automatically.
+    </div>
+  </div>
+  <div class="home-ind"></div>
+</div>
+
+<script>
+  (function(){ const ua=navigator.userAgent||''; const isIOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1); const isAndroid=/Android/.test(ua); document.documentElement.setAttribute('data-os', isIOS?'ios':isAndroid?'android':'other'); })();
+  try{ const t=localStorage.getItem('cmeTheme')||'blue'; if(t&&t!=='classical') document.documentElement.setAttribute('data-theme',t); }catch(e){}
+
+  const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const qs = new URLSearchParams(location.search);
+  const PROG = qs.get('title') || 'New Frontiers in Diabetes Care';
+
+  // shared session catalogue (kept in sync with cme-video.html)
+  const VIDEOS = [
+    {title:'Pathophysiology of Type 2 Diabetes', by:'Dr. Meera Iyer', dur:'12:30', cr:0.5},
+    {title:'Insulin Titration in Practice', by:'Dr. Arvind Kumar', dur:'15:10', cr:0.5},
+    {title:'Interpreting CGM Data', by:'Dr. Meera Iyer', dur:'10:45', cr:0.5},
+    {title:'Cardio-renal Protection in T2DM', by:'Dr. Rohan Sinha', dur:'18:20', cr:1}
+  ];
+
+  function getAll(){ try{ return JSON.parse(localStorage.getItem('cmeVideoProgress')||'{}'); }catch(e){ return {}; } }
+  function getProg(){ const a=getAll(); return a[PROG]||{}; }
+
+  const playIco='<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5.5v13l11-6.5z"/></svg>';
+  const checkIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  const chev='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>';
+
+  function render(){
+    document.getElementById('pTitle').textContent = PROG;
+    const prog = getProg();
+    let doneCount=0, crEarned=0, crTotal=0;
+    VIDEOS.forEach((v,i)=>{ crTotal+=v.cr; const pct=prog[i]||0; if(pct>=100){ doneCount++; crEarned+=v.cr; } });
+
+    document.getElementById('secN').textContent = VIDEOS.length+' sessions';
+    document.getElementById('progLine').textContent = doneCount+' of '+VIDEOS.length+' sessions completed';
+    document.getElementById('crLine').textContent = crEarned+' / '+crTotal+' CME earned';
+
+    const overall = Math.round((doneCount/VIDEOS.length)*100);
+    document.getElementById('ringPct').textContent = overall+'%';
+    const C=213.6;
+    requestAnimationFrame(()=>{ document.getElementById('ring').style.strokeDashoffset = (C*(1-overall/100)).toFixed(1); });
+
+    document.getElementById('vids').innerHTML = VIDEOS.map((v,i)=>{
+      const pct = prog[i]||0;
+      const done = pct>=100;
+      const status = done ? 'Completed · +'+v.cr+' CME' : (pct>0 ? pct+'% watched' : 'Not started');
+      return `<a class="vid" href="cme-video.html?title=${encodeURIComponent(PROG)}&v=${i}">
+        <span class="vthumb">${playIco}${done?`<span class="done">${checkIco}</span>`:''}</span>
+        <div class="vinfo">
+          <div class="vt">${esc(v.title)}</div>
+          <div class="vm"><span>${esc(v.by)}</span><span>${esc(v.dur)}</span><b>${v.cr} CME</b></div>
+          <div class="vbar"><i class="${done?'full':''}" style="width:${pct}%"></i></div>
+          <div class="vpct${done?' done':''}">${status}</div>
+        </div>
+        <span class="vchev">${chev}</span>
+      </a>`;
+    }).join('');
+  }
+
+  document.getElementById('back').addEventListener('click', ()=>{ history.length>1 ? history.back() : location.href='cme.html'; });
+  render();
+  // refresh when returning from the player (progress may have changed)
+  window.addEventListener('pageshow', render);
+
+  (function(){ var p=document.querySelector('.phone'),B=390; function f(){ if(innerWidth<=600){ var s=innerWidth/B; p.style.width=B+'px'; p.style.height=(innerHeight/s)+'px'; p.style.transform='scale('+s+')'; } else { p.style.transform=''; p.style.width=''; p.style.height=''; } } f(); addEventListener('resize',f); addEventListener('orientationchange',f); })();
+</script>
+</body>
+</html>

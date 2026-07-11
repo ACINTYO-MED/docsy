@@ -171,7 +171,7 @@
   .navitem:active{transform:scale(.9);opacity:.7;}
 
   /* theme chooser sheet */
-  .backdrop{position:absolute;inset:0;background:rgba(15,15,35,.45);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:opacity .3s, visibility .3s;z-index:30;}
+  .backdrop{position:absolute;inset:0;background:rgba(15,15,35,.45);opacity:0;visibility:hidden;transition:opacity .3s, visibility .3s;z-index:30;}
   .backdrop.open{opacity:1;visibility:visible;}
   .sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;background:var(--card);border-radius:22px 22px 0 0;padding:8px 18px calc(20px + env(safe-area-inset-bottom));
     transform:translateY(100%);transition:transform .5s cubic-bezier(.34,1.3,.5,1);box-shadow:0 -12px 40px -12px rgba(0,0,0,.4);}
@@ -280,7 +280,7 @@
   .hview svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
   /* certificate viewer modal */
-  .cm-back{position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,15,35,.6);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s, visibility .3s;}
+  .cm-back{position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,15,35,.6);opacity:0;visibility:hidden;transition:opacity .3s, visibility .3s;}
   .cm-back.open{opacity:1;visibility:visible;}
   .cm-card{width:100%;max-width:330px;background:var(--card);border-radius:18px;overflow:hidden;transform:scale(.94);transition:transform .3s cubic-bezier(.34,1.3,.5,1);box-shadow:0 30px 70px -20px rgba(0,0,0,.6);}
   .cm-back.open .cm-card{transform:scale(1);}
@@ -319,7 +319,7 @@
 
   /* hide-mock-statusbar */ .statusbar{display:none !important;}
 </style>
-  <link rel="stylesheet" href="global.css?v=9">
+  <link rel="stylesheet" href="global.css?v=10">
 </head>
 <body>
 <div class="phone">
@@ -768,7 +768,7 @@
     const online = r.mode === 'Online';
     const saved = isSaved(r.t);
     return `
-    <div class="rcard" onclick="location.href='speakers.html?type=course&title=${encodeURIComponent(r.t)}&mode=${online?'online':'offline'}&free=${r.free?1:0}'">
+    <div class="rcard" onclick="location.href='${online ? `cme-sessions.html?title=${encodeURIComponent(r.t)}` : `speakers.html?type=course&title=${encodeURIComponent(r.t)}&mode=offline&free=${r.free?1:0}`}'">
       <div class="rthumb">${ic[r.i]}</div>
       <div class="rinfo">
         <div class="rtitle">${r.t}</div>

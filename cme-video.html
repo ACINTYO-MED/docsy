@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session — CME</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+  @media (max-width:600px){ body{padding:0;overflow:hidden;justify-content:flex-start;} .phone{border-radius:0;box-shadow:none;transform-origin:top left;} .home-ind{display:none;} .statusbar{display:none;} .topbar{padding-top:max(8px,env(safe-area-inset-top));} }
+
+  .statusbar{display:flex;align-items:center;justify-content:space-between;padding:14px 26px 4px;font-size:15px;font-weight:700;color:var(--ink);}
+  .statusbar .sys{display:flex;align-items:center;gap:7px;} .statusbar svg{fill:currentColor;stroke:currentColor;}
+
+  .scroll{flex:1 1 auto;overflow-y:auto;padding:0 0 24px;} .scroll::-webkit-scrollbar{width:0;}
+
+  /* player */
+  .player{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(140deg,var(--d1),var(--d2) 60%,var(--d3));display:grid;place-items:center;overflow:hidden;}
+  .player::after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,var(--glow),transparent 70%);}
+  .p-topic{position:absolute;top:12px;left:14px;right:14px;color:#fff;font-size:12px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;opacity:.92;z-index:1;line-height:1.3;}
+  .p-play{position:relative;z-index:2;width:62px;height:62px;border-radius:50%;border:none;background:rgba(255,255,255,.95);color:var(--brand);display:grid;place-items:center;cursor:pointer;box-shadow:0 12px 30px -10px rgba(0,0,0,.5);transition:transform .16s cubic-bezier(.22,1,.36,1);}
+  .p-play:active{transform:scale(.9);} .p-play svg{width:26px;height:26px;}
+  .p-play.playing svg.i-play{display:none;} .p-play svg.i-pause{display:none;} .p-play.playing svg.i-pause{display:block;}
+  .p-badge{position:absolute;top:12px;right:14px;z-index:1;font-size:8.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.2);padding:4px 9px;border-radius:20px;}
+  /* scrub bar */
+  .p-ctl{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:10px 14px 12px;background:linear-gradient(transparent,rgba(0,0,0,.55));display:flex;align-items:center;gap:10px;}
+  .p-time{font-size:9.5px;font-weight:700;color:#fff;flex:0 0 auto;font-variant-numeric:tabular-nums;}
+  .p-track{flex:1;height:5px;border-radius:5px;background:rgba(255,255,255,.28);cursor:pointer;position:relative;}
+  .p-track i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:#fff;width:0;}
+  .p-track i::after{content:"";position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+
+  .body{padding:15px 18px 0;}
+  .vtitle{font-size:17px;font-weight:800;font-family:var(--display);letter-spacing:-.02em;line-height:1.25;}
+  .vmeta{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:9px;font-size:10.5px;color:var(--muted);}
+  .vmeta span{display:inline-flex;align-items:center;gap:5px;} .vmeta svg{width:13px;height:13px;}
+  .vmeta .cr{color:var(--gold);font-weight:800;}
+  .vmeta .cr svg{color:var(--gold);}
+
+  .status{display:flex;align-items:center;gap:10px;margin-top:14px;background:var(--soft1);border-radius:13px;padding:11px 13px;}
+  .status .sbar{flex:1;height:6px;border-radius:6px;background:var(--chip);overflow:hidden;position:relative;}
+  .status .sbar i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--brand);width:0;transition:width .3s;}
+  .status .sbar i.full{background:var(--green);}
+  .status .spct{font-size:11px;font-weight:800;color:var(--brand);flex:0 0 auto;} .status .spct.done{color:var(--green);}
+
+  .sec-h{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:20px 2px 9px;display:flex;align-items:center;gap:7px;}
+  .sec-h .ai{display:inline-flex;align-items:center;gap:4px;color:var(--brand);background:var(--brand-soft);padding:3px 8px;border-radius:20px;letter-spacing:.04em;} .sec-h .ai svg{width:11px;height:11px;}
+
+  .summary{background:var(--soft1);border-radius:14px;padding:14px;font-size:12px;line-height:1.65;color:var(--slate-700);}
+
+  .points{display:flex;flex-direction:column;gap:9px;margin-top:2px;}
+  .pt{display:flex;gap:10px;align-items:flex-start;background:var(--soft1);border-radius:12px;padding:11px 12px;}
+  .pt .pc{width:22px;height:22px;border-radius:7px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;flex:0 0 auto;margin-top:1px;} .pt .pc svg{width:13px;height:13px;}
+  .pt .px{flex:1;min-width:0;font-size:11.5px;line-height:1.5;color:var(--ink);}
+
+  .foot{flex:0 0 auto;padding:12px 18px calc(12px + env(safe-area-inset-bottom));background:var(--surface);border-top:1px solid var(--line);display:flex;gap:10px;}
+  .btn{flex:1;min-height:48px;border-radius:13px;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;transition:transform .16s cubic-bezier(.22,1,.36,1), background .18s;text-decoration:none;}
+  .btn svg{width:16px;height:16px;} .btn:active{transform:scale(.98);}
+  .btn.primary{background:var(--brand);color:#fff;} .btn.primary:hover{background:var(--brand-dark);}
+  .btn.ghost{background:var(--chip);color:var(--ink);flex:0 0 auto;padding:0 16px;}
+  .btn.done{background:var(--green);color:#fff;cursor:default;}
+
+  .toast{position:absolute;left:50%;bottom:88px;transform:translateX(-50%) translateY(10px);z-index:60;background:var(--ink);color:var(--surface);font-size:11.5px;font-weight:700;padding:10px 18px;border-radius:22px;box-shadow:0 10px 30px -8px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;max-width:82%;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* hide-mock-statusbar */ .statusbar{display:none !important;}
+</style>
+  <link rel="stylesheet" href="global.css?v=10">
+</head>
+<body>
+<div class="phone">
+  <div class="statusbar">
+    <span>9:41</span>
+    <div class="sys">
+      <svg width="17" height="13" viewBox="0 0 20 14"><rect x="0" y="9" width="3" height="5" rx="1"/><rect x="5" y="6" width="3" height="8" rx="1"/><rect x="10" y="3" width="3" height="11" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1"/></svg>
+      <svg width="17" height="13" viewBox="0 0 18 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1 4.5C5.5 .5 12.5 .5 17 4.5"/><path d="M4 7.5C6.8 5 11.2 5 14 7.5"/><path d="M7 10.5C8.2 9.4 9.8 9.4 11 10.5"/><circle cx="9" cy="13" r=".6" fill="currentColor" stroke="none"/></svg>
+      <svg width="26" height="14" viewBox="0 0 26 14"><rect x="0.5" y="0.5" width="22" height="13" rx="3.5" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2" y="2" width="18" height="10" rx="2.2" fill="currentColor"/><rect x="23.5" y="4.5" width="2" height="5" rx="1" fill="currentColor" fill-opacity=".4"/></svg>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <button class="back" id="back" aria-label="Back"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <h1>Session</h1>
+  </div>
+
+  <div class="scroll">
+    <!-- player -->
+    <div class="player">
+      <div class="p-topic" id="pTopic"></div>
+      <span class="p-badge">On-demand</span>
+      <button class="p-play" id="playBtn" aria-label="Play">
+        <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5.5v13l11-6.5z"/></svg>
+        <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+      </button>
+      <div class="p-ctl">
+        <span class="p-time" id="tCur">0:00</span>
+        <div class="p-track" id="track"><i id="trackFill"></i></div>
+        <span class="p-time" id="tDur">0:00</span>
+      </div>
+    </div>
+
+    <div class="body">
+      <div class="vtitle" id="vtitle"></div>
+      <div class="vmeta" id="vmeta"></div>
+
+      <div class="status">
+        <div class="sbar"><i id="sFill"></i></div>
+        <span class="spct" id="sPct">0%</span>
+      </div>
+
+      <div class="sec-h">Summary <span class="ai"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.6 5L19 8.5l-4.4 2.9L16 17l-4-3.2L8 17l1.4-5.6L5 8.5 10.4 7z"/></svg>AI</span></div>
+      <div class="summary" id="summary"></div>
+
+      <div class="sec-h">Key points</div>
+      <div class="points" id="points"></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <button class="btn ghost" id="secondary" type="button">Sessions</button>
+    <button class="btn primary" id="primary" type="button">Mark as complete</button>
+  </div>
+
+  <div class="home-ind"></div>
+</div>
+
+<script>
+  (function(){ const ua=navigator.userAgent||''; const isIOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1); const isAndroid=/Android/.test(ua); document.documentElement.setAttribute('data-os', isIOS?'ios':isAndroid?'android':'other'); })();
+  try{ const t=localStorage.getItem('cmeTheme')||'blue'; if(t&&t!=='classical') document.documentElement.setAttribute('data-theme',t); }catch(e){}
+
+  const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const qs = new URLSearchParams(location.search);
+  const PROG = qs.get('title') || 'New Frontiers in Diabetes Care';
+  const IDX = Math.max(0, parseInt(qs.get('v')||'0',10));
+
+  const VIDEOS = [
+    {title:'Pathophysiology of Type 2 Diabetes', by:'Dr. Meera Iyer', dur:'12:30', secs:750, cr:0.5,
+     summary:'This session reviews the core defects that drive type 2 diabetes — insulin resistance in muscle and liver, progressive beta-cell dysfunction, blunted incretin response, and increased overnight hepatic glucose output. It frames why early, mechanism-based therapy changes the long-term trajectory.',
+     points:['Insulin resistance can precede hyperglycaemia by 10+ years','Beta-cell function falls ~4% per year after diagnosis','The incretin effect is markedly blunted in T2DM','Rising hepatic glucose output explains high fasting sugars']},
+    {title:'Insulin Titration in Practice', by:'Dr. Arvind Kumar', dur:'15:10', secs:910, cr:0.5,
+     summary:'A practical, outpatient-focused walk-through of starting and titrating basal insulin: choosing a starting dose, setting fasting-glucose targets, using a simple titration algorithm, and recognising and preventing nocturnal hypoglycaemia.',
+     points:['Start basal at 10 U or 0.1–0.2 U/kg/day','Titrate by fasting glucose every 3 days','Target fasting glucose 80–130 mg/dL for most adults','Reduce the titration step if any nocturnal hypo occurs']},
+    {title:'Interpreting CGM Data', by:'Dr. Meera Iyer', dur:'10:45', secs:645, cr:0.5,
+     summary:'How to read a continuous glucose monitoring report — Time-in-Range, Glucose Management Indicator, glucose variability and the ambulatory glucose profile — and how to convert those metrics into concrete therapy adjustments.',
+     points:['Aim for Time-in-Range above 70%','Keep time-below-range under 4%','GMI approximates the expected HbA1c','Review overnight patterns before daytime ones']},
+    {title:'Cardio-renal Protection in T2DM', by:'Dr. Rohan Sinha', dur:'18:20', secs:1100, cr:1,
+     summary:'Evidence for SGLT2 inhibitors and GLP-1 receptor agonists in reducing cardiovascular and renal events in type 2 diabetes, with practical guidance on patient selection, baseline checks and combining the two classes.',
+     points:['SGLT2 inhibitors reduce heart-failure hospitalisation and CKD progression','GLP-1 receptor agonists reduce major adverse cardiovascular events','Cardio-renal benefits are largely independent of glucose lowering','Check eGFR and volume status before initiation']}
+  ];
+  const V = VIDEOS[IDX] || VIDEOS[0];
+
+  function getAll(){ try{ return JSON.parse(localStorage.getItem('cmeVideoProgress')||'{}'); }catch(e){ return {}; } }
+  function getPct(){ const a=getAll(); return (a[PROG]&&a[PROG][IDX])||0; }
+  function setPct(pct){ const a=getAll(); a[PROG]=a[PROG]||{}; a[PROG][IDX]=Math.round(pct); localStorage.setItem('cmeVideoProgress', JSON.stringify(a)); }
+
+  const clockIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+  const userIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20v-1.4A4.6 4.6 0 0 1 9.6 14h4.8a4.6 4.6 0 0 1 4.6 4.6V20"/></svg>';
+  const shieldIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/><polyline points="9 12 11.5 14.5 15.5 9.5"/></svg>';
+  const dotIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+  function mmss(sec){ sec=Math.max(0,Math.round(sec)); const m=Math.floor(sec/60), s=sec%60; return m+':'+String(s).padStart(2,'0'); }
+
+  // fill static content
+  document.getElementById('pTopic').textContent = V.title;
+  document.getElementById('vtitle').textContent = V.title;
+  document.getElementById('vmeta').innerHTML =
+    `<span>${userIco}${esc(V.by)}</span><span>${clockIco}${esc(V.dur)}</span><span class="cr">${shieldIco}${V.cr} CME</span>`;
+  document.getElementById('summary').textContent = V.summary;
+  document.getElementById('points').innerHTML = V.points.map(p=>`<div class="pt"><span class="pc">${dotIco}</span><div class="px">${esc(p)}</div></div>`).join('');
+  document.getElementById('tDur').textContent = V.dur;
+
+  // playback state
+  let pct = getPct();
+  let playing = false, timer = null;
+  const trackFill=document.getElementById('trackFill'), sFill=document.getElementById('sFill'),
+        sPct=document.getElementById('sPct'), tCur=document.getElementById('tCur'),
+        playBtn=document.getElementById('playBtn'), primary=document.getElementById('primary');
+
+  function paint(){
+    trackFill.style.width = pct+'%';
+    sFill.style.width = pct+'%';
+    sPct.textContent = Math.round(pct)+'%';
+    tCur.textContent = mmss(V.secs*pct/100);
+    const done = pct>=100;
+    sFill.classList.toggle('full', done);
+    sPct.classList.toggle('done', done);
+    if(done){
+      primary.classList.add('done'); primary.classList.remove('primary');
+      primary.innerHTML = dotIco+'Completed · +'+V.cr+' CME';
+      primary.disabled = true;
+    }
+  }
+
+  let toastT;
+  function toast(m){ let el=document.getElementById('toast'); if(!el){ el=document.createElement('div'); el.id='toast'; el.className='toast'; document.querySelector('.phone').appendChild(el);} el.textContent=m; void el.offsetWidth; el.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),1700); }
+
+  function stop(){ playing=false; playBtn.classList.remove('playing'); if(timer){ clearInterval(timer); timer=null; } }
+  function complete(){ pct=100; setPct(100); paint(); stop(); toast('Session complete · +'+V.cr+' CME earned'); }
+
+  function play(){
+    if(pct>=100) return;
+    playing=true; playBtn.classList.add('playing');
+    // accelerated simulated playback (~9s end-to-end) so the flow is demoable
+    timer=setInterval(()=>{
+      pct = Math.min(100, pct + 100/45);
+      setPct(pct); paint();
+      if(pct>=100){ complete(); }
+    }, 200);
+  }
+  playBtn.addEventListener('click', ()=>{ playing ? stop() : play(); });
+
+  // seek by tapping the track
+  document.getElementById('track').addEventListener('click', e=>{
+    const r=e.currentTarget.getBoundingClientRect();
+    pct = Math.max(0, Math.min(100, ((e.clientX-r.left)/r.width)*100));
+    setPct(pct); paint();
+    if(pct>=100) complete();
+  });
+
+  primary.addEventListener('click', ()=>{ if(pct<100) complete(); });
+  document.getElementById('secondary').addEventListener('click', ()=>{ location.href='cme-sessions.html?title='+encodeURIComponent(PROG); });
+  document.getElementById('back').addEventListener('click', ()=>{ history.length>1 ? history.back() : location.href='cme-sessions.html?title='+encodeURIComponent(PROG); });
+
+  paint();
+
+  (function(){ var p=document.querySelector('.phone'),B=390; function f(){ if(innerWidth<=600){ var s=innerWidth/B; p.style.width=B+'px'; p.style.height=(innerHeight/s)+'px'; p.style.transform='scale('+s+')'; } else { p.style.transform=''; p.style.width=''; p.style.height=''; } } f(); addEventListener('resize',f); addEventListener('orientationchange',f); })();
+</script>
+</body>
+</html>
