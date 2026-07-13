@@ -788,7 +788,7 @@
   })();
 
   // ---- Notifications bell (no dedicated page yet → acknowledge with a toast) ----
-  document.getElementById('bellBtn').addEventListener('click', ()=>toast('3 new notifications'));
+  document.getElementById('bellBtn').addEventListener('click', ()=>{ location.href='notifications.html'; });
 
   // ---- Activity detail sheet ----
   const actBackdrop = document.getElementById('actBackdrop');

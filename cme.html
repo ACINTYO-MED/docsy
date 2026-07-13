@@ -108,13 +108,18 @@
   .live-join:active{transform:scale(.94);}
 
   /* upcoming — compact agenda grouped by timing */
-  .agenda{display:flex;flex-direction:column;}
-  .agenda .grp{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:2px 2px 2px;}
-  .agenda .grp+.arow{border-top:none;}
-  .agenda .grp:not(:first-child){margin-top:11px;}
-  .arow{display:flex;align-items:center;gap:13px;padding:13px 2px;border-top:1px solid var(--line);cursor:pointer;text-decoration:none;color:inherit;transition:transform .18s cubic-bezier(.22,1,.36,1), opacity .18s;}
-  .arow:first-child{border-top:none;}
-  .arow:active{transform:scale(.99);opacity:.85;}
+  .agenda{display:flex;flex-direction:column;gap:8px;}
+  .agenda .grp{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:6px 2px 0;}
+  .agenda .grp:not(:first-child){margin-top:6px;}
+  .arow{display:flex;align-items:center;gap:12px;padding:12px 13px;background:var(--soft1);border:1px solid transparent;border-radius:14px;cursor:pointer;text-decoration:none;color:inherit;transition:transform .18s cubic-bezier(.22,1,.36,1), border-color .18s;}
+  .arow:hover{border-color:var(--brand);transform:translateY(-1px);}
+  .arow:active{transform:scale(.99);}
+  /* International faculty highlight */
+  .intl-badge{display:inline-flex;align-items:center;gap:4px;font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);background:color-mix(in srgb,var(--gold) 13%,transparent);border:1px solid color-mix(in srgb,var(--gold) 42%,transparent);padding:3px 7px;border-radius:20px;line-height:1;white-space:nowrap;vertical-align:middle;}
+  .intl-badge svg{width:10px;height:10px;stroke-width:2;flex:0 0 auto;}
+  .rcard.intl,.arow.intl,.live-card.intl{border-color:color-mix(in srgb,var(--gold) 55%,var(--line));background:color-mix(in srgb,var(--gold) 5%,var(--soft1));}
+  .live-card.intl{background:color-mix(in srgb,var(--gold) 6%,var(--surface));}
+  .rmeta .intl-badge,.ameta .intl-badge{margin-left:2px;}
   .adot{width:9px;height:9px;border-radius:50%;background:var(--brand);flex:0 0 auto;box-shadow:0 0 0 4px var(--brand-soft);}
   .ainfo{flex:1;min-width:0;}
   .atitle{font-size:12.5px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -386,11 +391,12 @@
 
     <!-- Live now -->
     <div class="sec rise"><h2>Live now</h2><a href="speakers.html?type=upcoming">See all<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></a></div>
-    <a class="live-card rise" href="speakers.html?type=live&title=Cardiometabolic%20Update%202025&sub=LIVE%20%C2%B7%202%2C480%20watching&mode=online">
+    <a class="live-card rise intl" href="speakers.html?type=live&title=Cardiometabolic%20Update%202025&sub=LIVE%20%C2%B7%202%2C480%20watching&mode=online">
       <button class="savebtn" id="liveSave" type="button" aria-label="Save CME" aria-pressed="false" data-title="Cardiometabolic Update 2025" data-meta="Cardiological Society of India · 24 May 2025" data-credits="2 CME" data-mode="Online" onclick="toggleSave(event,this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></button>
       <div class="live-pad">
         <span class="live-badge"><span class="d"></span>LIVE · 2,480 watching</span>
         <span class="ptag paid" style="margin-left:6px">₹499</span>
+        <span class="intl-badge" style="margin-left:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>International Faculty</span>
         <div class="live-title">Cardiometabolic Update 2025</div>
         <div class="live-meta">
           <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><line x1="3" y1="9" x2="21" y2="9"/></svg>24 May 2025</span>
@@ -750,8 +756,10 @@
 
   const chev = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>';
   const pTag = (f,price) => f ? '<span class="ptag free">Free</span>' : '<span class="ptag paid">'+(price||'Paid')+'</span>';
+  const globeIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>';
+  const intlBadge = '<span class="intl-badge">'+globeIco+'International Faculty</span>';
   const upcoming = [
-    {t:'Diabetes & Kidney Summit', d:'Mon 02 Jun', cr:'2 CME', org:'Indian Society of Nephrology', mode:'offline', free:false, price:'₹1,999', grp:'This week'},
+    {t:'Diabetes & Kidney Summit', d:'Mon 02 Jun', cr:'2 CME', org:'Indian Society of Nephrology', mode:'offline', free:false, price:'₹1,999', grp:'This week', intl:true},
     {t:'Hypertension Masterclass', d:'Sat 14 Jun', cr:'1.5 CME', org:'Association of Physicians of India', mode:'online', free:true, grp:'This week'},
     {t:'Lipid Management Update', d:'Sat 28 Jun', cr:'2 CME', org:'Lipid Association of India', mode:'recorded', free:false, price:'₹299', grp:'Later'}
   ];
@@ -760,11 +768,12 @@
   document.getElementById('upcoming').innerHTML = uGroups.map(g=>`
     <div class="grp">${g.name}</div>
     ${g.items.map(u=>`
-      <a class="arow" href="speakers.html?type=upcoming&title=${encodeURIComponent(u.t)}&sub=${encodeURIComponent(u.d)}&mode=${u.mode}&free=${u.free?1:0}">
+      <a class="arow${u.intl?' intl':''}" href="speakers.html?type=upcoming&title=${encodeURIComponent(u.t)}&sub=${encodeURIComponent(u.d)}&mode=${u.mode}&free=${u.free?1:0}">
         <span class="adot"></span>
         <div class="ainfo">
           <div class="atitle">${u.t}</div>
           <div class="ameta"><b>${u.d}</b> · <span class="acr">${u.cr}</span> · ${pTag(u.free,u.price)}</div>
+          ${u.intl?`<div style="margin-top:5px">${intlBadge}</div>`:''}
           <div class="aorg">${ic.org}Organized by ${u.org}</div>
         </div>
         <button class="savebtn${isSaved(u.t)?' saved':''}" type="button" aria-label="Save CME" aria-pressed="${isSaved(u.t)}" data-title="${u.t}" data-meta="${u.org}" data-credits="${u.cr}" data-mode="${u.mode}" onclick="event.preventDefault();event.stopPropagation();toggleSave(event,this)">${bookmarkSvg}</button>
@@ -773,7 +782,7 @@
   (function(){ const b=document.getElementById('liveSave'); if(b && isSaved(b.dataset.title)) b.classList.add('saved'); })();
 
   const recommended = [
-    {t:'New Frontiers in Diabetes Care', by:'Dr. Meera Iyer', dur:'45 min', cr:'2 CME', org:'RSSDI', mode:'Online', free:false, price:'₹499', i:'drop'},
+    {t:'New Frontiers in Diabetes Care', by:'Dr. Meera Iyer', dur:'45 min', cr:'2 CME', org:'RSSDI', mode:'Online', free:false, price:'₹499', i:'drop', intl:true},
     {t:'Resistant Hypertension', by:'Dr. Rohan Sinha', dur:'30 min', cr:'1.5 CME', org:'Cardiological Society of India', mode:'Offline', free:true, i:'heart'},
     {t:'CGM in Clinical Practice', by:'Dr. Vijay Menon', dur:'30 min', cr:'1 CME', org:'Diabetes India', mode:'Online', free:true, i:'activity'}
   ];
@@ -781,11 +790,12 @@
     const online = r.mode === 'Online';
     const saved = isSaved(r.t);
     return `
-    <div class="rcard" onclick="location.href='${online ? `cme-sessions.html?title=${encodeURIComponent(r.t)}` : `speakers.html?type=course&title=${encodeURIComponent(r.t)}&mode=offline&free=${r.free?1:0}`}'">
+    <div class="rcard${r.intl?' intl':''}" onclick="location.href='${online ? `cme-sessions.html?title=${encodeURIComponent(r.t)}` : `speakers.html?type=course&title=${encodeURIComponent(r.t)}&mode=offline&free=${r.free?1:0}`}'">
       <div class="rthumb">${ic[r.i]}</div>
       <div class="rinfo">
         <div class="rtitle">${r.t}</div>
         <div class="rmeta">${pTag(r.free,r.price)}<span>${r.by}</span><span>${ic.clock}${r.dur}</span><span class="rmode ${online?'online':'offline'}">${online?ic.globe:ic.pin}${r.mode}</span></div>
+        ${r.intl?`<div class="rmeta" style="margin-top:5px">${intlBadge}</div>`:''}
         <div class="rorg">${ic.org}Organized by ${r.org}</div>
       </div>
       <span class="rcr">${r.cr}</span>
