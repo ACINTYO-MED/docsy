@@ -111,9 +111,9 @@ button, input, select, textarea, optgroup{font-family:var(--font-sans);}
 .navitem{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:48px;font-size:var(--fs-nav);color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:none;transition:transform .18s cubic-bezier(.22,1,.36,1), color .18s;}
 .navitem.active{color:var(--brand);font-weight:var(--fw-semibold);}
 .navitem:active{transform:scale(.9);}
-/* Doxy — prominent raised centre button */
+/* Doxy — prominent raised centre button (full-colour mascot) */
 .navitem.doxy{color:var(--brand);font-weight:var(--fw-semibold);}
-.navitem.doxy svg{width:46px;height:46px;padding:12px;border-radius:50%;background:var(--brand);color:#fff;box-shadow:0 8px 18px -6px var(--brand);margin:-16px 0 -3px;}
+.navitem.doxy svg,.navitem.doxy img{width:48px;height:48px;margin:-24px 0 -1px;border-radius:50%;object-fit:cover;filter:drop-shadow(0 6px 12px rgba(0,0,0,.3));}
 
 /* ---------- shared bottom sheet & toast ---------- */
 .backdrop{position:absolute;inset:0;background:rgba(15,15,35,.5);opacity:0;visibility:hidden;transition:opacity .3s, visibility .3s;z-index:30;}
