@@ -21,13 +21,13 @@
   .scroll{flex:1 1 auto;overflow-y:auto;padding:16px 18px 22px;}
   .scroll::-webkit-scrollbar{width:0;}
 
-  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px;}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px;}
   .tile{background:var(--soft1);border:1px solid transparent;border-radius:14px;padding:13px 6px;text-align:center;}
   .tile:nth-child(2){background:var(--soft2);}
   .tile b{display:block;font-size:19px;font-weight:800;font-family:var(--display);color:var(--ink);letter-spacing:-.02em;}
   .tile span{font-size:8.5px;font-weight:700;color:var(--muted);margin-top:2px;display:block;text-transform:uppercase;letter-spacing:.03em;}
 
-  .acc-link{display:flex;align-items:center;gap:12px;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px;text-decoration:none;color:inherit;transition:border-color .16s, transform .16s cubic-bezier(.22,1,.36,1);}
+  .acc-link{display:flex;align-items:center;gap:12px;margin-top:9px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px;text-decoration:none;color:inherit;transition:border-color .16s, transform .16s cubic-bezier(.22,1,.36,1);}
   .acc-link:hover{border-color:var(--brand);} .acc-link:active{transform:scale(.99);}
   .acc-link .ai{width:36px;height:36px;border-radius:10px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;flex:0 0 auto;}
   .acc-link .ai svg{width:18px;height:18px;}
@@ -35,20 +35,20 @@
   .acc-link .abadge{font-size:9px;font-weight:800;color:var(--gold);background:rgba(176,137,79,.16);padding:3px 8px;border-radius:20px;flex:0 0 auto;}
   .acc-link .chev{color:var(--muted);flex:0 0 auto;}
 
-  .seg{display:flex;background:var(--chip);border-radius:12px;padding:4px;margin-top:16px;}
+  .seg{display:flex;background:var(--chip);border-radius:12px;padding:4px;margin-top:11px;}
   .seg button{flex:1;border:none;background:none;font-family:inherit;font-size:12px;font-weight:800;color:var(--muted);padding:9px;min-height:40px;border-radius:9px;cursor:pointer;transition:background .16s,color .16s;}
   .seg button.on{background:var(--card);color:var(--brand);box-shadow:0 4px 12px -6px rgba(0,0,0,.2);}
   .seg-count{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;margin-left:4px;border-radius:20px;background:var(--brand);color:#fff;font-size:9px;font-weight:800;vertical-align:middle;}
   .seg button:not(.on) .seg-count{background:var(--muted);}
 
-  .prog-search{position:relative;margin-top:14px;}
+  .prog-search{position:relative;margin-top:10px;}
   .prog-search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted);}
   .prog-search input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 14px 12px 38px;font-size:12px;font-family:inherit;color:var(--ink);}
   .prog-search input::placeholder{color:var(--muted);}
   .prog-search input:focus{outline:none;border-color:var(--brand);}
   .search-empty{text-align:center;color:var(--muted);font-size:11px;padding:30px;}
 
-  .list{margin-top:14px;display:flex;flex-direction:column;gap:12px;}
+  .list{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
   .prog{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;cursor:pointer;transition:transform .16s cubic-bezier(.22,1,.36,1), border-color .16s;}
   .prog:hover{border-color:var(--brand);} .prog:active{transform:scale(.99);}
   .prog .ptop{display:flex;align-items:center;gap:8px;}
@@ -62,7 +62,7 @@
   .prog .pt{font-size:14px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;margin-top:9px;line-height:1.25;}
   .prog .pm{font-size:10px;color:var(--muted);margin-top:6px;display:flex;gap:14px;flex-wrap:wrap;}
   .prog .pm span{display:inline-flex;align-items:center;gap:5px;} .prog .pm svg{width:12px;height:12px;flex:0 0 auto;}
-  .reg{margin-top:12px;}
+  .reg{margin-top:9px;}
   .reg .rn{display:flex;align-items:baseline;justify-content:space-between;font-size:10.5px;}
   .reg .rn b{font-size:13px;font-weight:800;font-family:var(--display);color:var(--brand);}
   .reg .rn b small{font-size:10px;color:var(--muted);font-weight:600;font-family:var(--ui);}
@@ -107,7 +107,7 @@
 
   /* hide-mock-statusbar */ .statusbar{display:none !important;}
 </style>
-  <link rel="stylesheet" href="global.css?v=15">
+  <link rel="stylesheet" href="global.css?v=21">
 </head>
 <body>
 <div class="phone">

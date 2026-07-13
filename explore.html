@@ -24,14 +24,14 @@
   .icon-btn:active{transform:scale(.94);}
 
   /* search */
-  .search{position:relative;margin-top:16px;}
+  .search{position:relative;margin-top:11px;}
   .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--muted);}
   .search input{width:100%;min-height:38px;height:38px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 14px 0 36px;font-size:12px;font-family:inherit;color:var(--ink);}
   .search input::placeholder{color:var(--muted);}
   .search input:focus{outline:none;border-color:var(--brand);}
 
   /* section header */
-  .sec{display:flex;align-items:baseline;justify-content:space-between;margin:24px 0 12px;}
+  .sec{display:flex;align-items:baseline;justify-content:space-between;margin:14px 0 9px;}
   .sec h2{font-size:15px;font-weight:800;font-family:var(--display);letter-spacing:-.02em;}
   .sec a{font-size:10px;font-weight:700;color:var(--brand);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:3px;transition:transform .18s cubic-bezier(.22,1,.36,1), opacity .18s;}
   .sec a:active{transform:scale(.94);opacity:.7;}
@@ -102,7 +102,7 @@
 
   /* hide-mock-statusbar */ .statusbar{display:none !important;}
 </style>
-  <link rel="stylesheet" href="global.css?v=15">
+  <link rel="stylesheet" href="global.css?v=21">
 </head>
 <body>
 <div class="phone">
@@ -139,12 +139,12 @@
 
   </div>
 
-  <div class="nav">
+      <div class="nav">
     <a class="navitem" href="home.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>Home</a>
-    <a class="navitem active" href="cme.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>CME</a>
-    <a class="navitem" href="doxy.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 8V4.5"/><circle cx="12" cy="3" r="1.2"/><circle cx="9" cy="13.5" r="1.1"/><circle cx="15" cy="13.5" r="1.1"/><path d="M2 12v3M22 12v3"/></svg>Doxy</a>
     <a class="navitem" href="post.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Post</a>
-    <a class="navitem" href="referral.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3.2"/><path d="M3 20v-1.5A4.5 4.5 0 0 1 7.5 14h2"/><path d="M14 14h6"/><path d="m17 11 3 3-3 3"/></svg>Referral</a>
+    <a class="navitem doxy" href="doxy.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7.5" width="16" height="12" rx="4"/><path d="M12 7.5V4"/><circle cx="12" cy="3" r="1.1"/><circle cx="9" cy="13" r="1.25" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.25" fill="currentColor" stroke="none"/><path d="M9.5 16.4h5"/><path d="M2 12v3M22 12v3"/></svg>Doxy</a>
+    <a class="navitem active" href="cme.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>CME</a>
+    <a class="navitem" href="referral.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3.2"/><path d="M3 20v-1.5A4.5 4.5 0 0 1 7.5 14h2"/><path d="M14 14h6"/><path d="m17 11 3 3-3 3"/></svg>Refer</a>
   </div>
   <div class="home-ind"></div>
   <div class="toast" id="toast"></div>
