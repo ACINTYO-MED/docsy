@@ -29,14 +29,14 @@
   .htop .mewrap{border-radius:50%;}
   .htop a:active{transform:scale(.94);}
 
-  .search{position:relative;margin-top:14px;}
+  .search{position:relative;margin-top:6px;}
   .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--muted);}
   .search input{width:100%;min-height:38px;height:38px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 14px 0 36px;font-size:12px;font-family:inherit;color:var(--ink);}
   .search input::placeholder{color:var(--muted);}
   .search input:focus{outline:none;border-color:var(--brand);}
 
   /* profile completion nudge */
-  .pcomplete{position:relative;display:flex;align-items:center;gap:13px;margin-top:16px;background:var(--soft2);border:1px solid transparent;border-radius:16px;padding:13px 40px 13px 13px;text-decoration:none;color:inherit;transition:transform .18s, border-color .18s;}
+  .pcomplete{position:relative;display:flex;align-items:center;gap:13px;margin-top:6px;background:var(--soft2);border:1px solid transparent;border-radius:16px;padding:13px 40px 13px 13px;text-decoration:none;color:inherit;transition:transform .18s, border-color .18s;}
   .pcomplete:hover{border-color:var(--brand);}
   .pcomplete:active{transform:scale(.99);}
   .pcomplete .ring{position:relative;width:46px;height:46px;flex:0 0 auto;}
@@ -51,19 +51,20 @@
   .pcomplete .pc-x{position:absolute;top:9px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;font-size:12px;line-height:1;border-radius:50%;}
   .pcomplete .pc-x:active{transform:scale(.9);}
 
-  .lbl{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:24px 0 12px;}
+  .lbl{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:10px 0 6px;}
 
   /* modules — cohesive neutral cards, single accent */
-  .modules{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;}
-  .mtile{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:flex-start;gap:9px;background:var(--soft1);border:1px solid transparent;border-radius:15px;padding:14px 7px;min-height:96px;text-decoration:none;color:inherit;
+  .modules{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;}
+  .mtile{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;gap:12px;background:var(--soft1);border:1px solid transparent;border-radius:18px;padding:18px 12px;min-height:142px;text-decoration:none;color:inherit;
     transition:transform .18s cubic-bezier(.22,1,.36,1), border-color .18s;}
   .mtile:nth-child(2n){background:var(--soft2);}
   .mtile:hover{transform:translateY(-3px);border-color:var(--brand);}
   .mtile:active{transform:scale(.985);}
   .mtile .ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:var(--brand);background:rgba(255,255,255,.55);}
   .mtile .ic svg{width:21px;height:21px;}
-  .mtile .nm{font-size:11px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;line-height:1.2;}
-  .mtile .ms{display:none;}
+  .mtile > div{min-width:0;}
+  .mtile .nm{font-size:12.5px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;line-height:1.2;}
+  .mtile .ms{display:block;font-size:9.5px;color:var(--muted);margin-top:4px;line-height:1.35;}
   .mtile .badge{position:absolute;top:8px;right:8px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;display:grid;place-items:center;line-height:1;}
   .mtile .arw{display:none;}
   .mtile:hover .arw{opacity:1;transform:translateX(2px);}
@@ -100,7 +101,7 @@
   .feature.empty .go{margin:14px 0 2px;}
 
   /* section head */
-  .sh{display:flex;align-items:baseline;justify-content:space-between;margin:24px 0 12px;}
+  .sh{display:flex;align-items:baseline;justify-content:space-between;margin:10px 0 6px;}
   .sh h2{font-size:15px;font-weight:800;font-family:var(--display);letter-spacing:-.02em;}
   .sh a{font-size:10px;font-weight:700;color:var(--brand);text-decoration:none;}
 
@@ -280,7 +281,7 @@
 
   /* hide-mock-statusbar */ .statusbar{display:none !important;}
 </style>
-  <link rel="stylesheet" href="global.css?v=10">
+  <link rel="stylesheet" href="global.css?v=15">
 </head>
 <body>
 <div class="phone">
@@ -460,7 +461,8 @@
     const THEMES = [
       { id:'classical', name:'Classic', c:'#7d2c3b' },
       { id:'blue',      name:'Ocean',   c:'#1e5fbf' },
-      { id:'green',     name:'Forest',  c:'#0f7a5a' }
+      { id:'green',     name:'Forest',  c:'#0f7a5a' },
+      { id:'white',     name:'White',   c:'#ffffff' }
     ];
     const grid = document.getElementById('themeGrid');
     const sheet = document.getElementById('themeSheet');
