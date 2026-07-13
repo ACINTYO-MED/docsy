@@ -24,11 +24,11 @@ jobs:
           shopt -s extglob || true
           cp -r !( .github ) public 2>/dev/null || cp -r . public || true
       - name: Upload artifact
-        uses: actions/upload-artifact
+        uses: actions/upload-artifact@v3
         with:
           name: github-pages
           path: public
           retention-days: 1
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages
+        uses: actions/deploy-pages@v3
