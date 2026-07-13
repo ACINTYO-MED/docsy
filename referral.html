@@ -267,20 +267,9 @@
       <a class="prof-ic" href="profile.html" aria-label="My profile"><img src="https://randomuser.me/api/portraits/women/79.jpg" alt="Me"></a>
     </div>
 
-    <!-- Points + stats (compact) -->
-    <div class="pts rise" id="ptsCard" role="button" tabindex="0" aria-label="Referral points">
-      <div class="pts-main">
-        <div class="pts-ring">
-          <svg viewBox="0 0 100 100"><circle class="prt" cx="50" cy="50" r="42"/><circle class="prp" id="ptsRing" cx="50" cy="50" r="42"/></svg>
-          <div class="pts-rc"><b id="ptsNum">120</b><span>PTS</span></div>
-        </div>
-        <div class="pts-info">
-          <div class="pts-top"><span class="pts-lbl">Referral points</span><span class="pts-tier" id="ptsTier">Gold</span></div>
-          <div class="pts-bar"><i id="ptsBar"></i></div>
-          <div class="pts-next" id="ptsGoal">80 pts to Platinum</div>
-        </div>
-      </div>
-      <div class="pts-stats">
+    <!-- Stats -->
+    <div class="pts rise">
+      <div class="pts-stats" style="margin-top:0;padding-top:0;border-top:none;">
         <div class="ps"><b id="stSent">0</b><span>Sent</span></div>
         <div class="ps"><b id="stActive">0</b><span>Active</span></div>
         <div class="ps"><b id="stDone">0</b><span>Completed</span></div>
@@ -324,7 +313,7 @@
         <div class="nav">
     <a class="navitem" href="home.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>Home</a>
     <a class="navitem" href="post.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Post</a>
-    <a class="navitem doxy" href="doxy.html"><img src="assets/doxy.svg" alt="Doxy">Doxy</a>
+    <a class="navitem doxy" href="doxy.html"><img src="assets/doxy.png" alt="Doxy">Doxy</a>
     <a class="navitem" href="cme.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>CME</a>
     <a class="navitem active" href="referral.html"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3.2"/><path d="M3 20v-1.5A4.5 4.5 0 0 1 7.5 14h2"/><path d="M14 14h6"/><path d="m17 11 3 3-3 3"/></svg>Refer</a>
   </div>
@@ -432,7 +421,6 @@
     cancelled:{cls:'cancelled', label:'Cancelled'}
   };
   const stpill = s => { const m=STATUS[s]||STATUS.pending; return '<span class="stpill '+m.cls+'"><span class="dt"></span>'+m.label+'</span>'; };
-  const POINTS_PER = 20, BASE_POINTS = 100, GOAL = 200;
 
   // ---- seed data (would come from the API) ----
   const SEED = [
@@ -449,7 +437,7 @@
     { id:'r2', dir:'sent', doctor:{name:'Dr. Arvind Kumar', spec:'Cardiology', hosp:'Fortis Heart Institute', img:'https://randomuser.me/api/portraits/men/32.jpg'},
       patient:{name:'S. Patel', age:45, sex:'Female', phone:'+91 99••• ••884'}, condition:'Atypical chest pain, abnormal ECG',
       reason:'45F with exertional chest discomfort and ST-T changes on ECG. Requesting cardiology evaluation and stress testing.',
-      priority:'urgent', date:'3w', ago:504, status:'completed', points:POINTS_PER,
+      priority:'urgent', date:'3w', ago:504, status:'completed',
       docs:[{name:'12-lead ECG.jpg', size:'Image · 1.1 MB', type:'img'},{name:'Troponin & CBC.pdf', size:'PDF · 210 KB', type:'doc'}],
       timeline:[
         {label:'Referral sent', d:'19 May', note:'Referred to Dr. Arvind Kumar.', state:'done'},
@@ -503,13 +491,6 @@
     document.getElementById('stSent').textContent = sent.length;
     document.getElementById('stActive').textContent = active.length;
     document.getElementById('stDone').textContent = done.length;
-    const pts = BASE_POINTS + done.length*POINTS_PER;
-    document.getElementById('ptsNum').textContent = pts;
-    const frac = Math.min(1, pts/GOAL);
-    document.getElementById('ptsBar').style.width = (frac*100)+'%';
-    const ring = document.getElementById('ptsRing'); if(ring) ring.style.strokeDashoffset = (263.9*(1-frac)).toFixed(1);
-    document.getElementById('ptsGoal').textContent = pts>=GOAL ? 'Platinum reached 🎉' : (GOAL-pts)+' pts to Platinum';
-    document.getElementById('ptsTier').textContent = pts>=GOAL ? 'Platinum' : 'Gold';
     try{ const cp=JSON.parse(localStorage.getItem('casePosts')||'[]'); const n=cp.length; const sub=document.getElementById('clSub');
       if(sub) sub.textContent = n ? (n+' case'+(n>1?'s':'')+' posted · tap for opinions & AI summary') : 'See opinions on cases you posted'; }catch(e){}
   }
@@ -517,7 +498,6 @@
   function rowHtml(r){
     const dirTag = r.dir==='sent' ? 'To' : 'From';
     const prioTag = r.priority && r.priority!=='routine' ? '<span class="prio '+r.priority+'">'+esc(r.priority)+'</span>' : '';
-    const ptsTag = (r.status==='completed' && r.points) ? '<span class="rpts">'+ICON.star+'+'+r.points+'</span>' : '';
     return '<button class="rcard" data-id="'+r.id+'">'+
       '<span class="rav">'+esc(initials(r.doctor.name))+(r.doctor.img?'<img src="'+esc(r.doctor.img)+'" alt="" onerror="this.remove()">':'')+'</span>'+
       '<div class="rinfo">'+
@@ -525,7 +505,7 @@
         '<div class="rcond">'+esc(r.condition)+'</div>'+
         '<div class="rdoc">'+ICON.branch+'<span class="rd-t">'+dirTag+' <b>'+esc(r.doctor.name)+'</b> · '+esc(r.doctor.spec)+'</span></div>'+
       '</div>'+
-      '<div class="rright">'+stpill(r.status)+'<span class="rdate">'+esc(r.date)+'</span>'+ptsTag+'</div>'+
+      '<div class="rright">'+stpill(r.status)+'<span class="rdate">'+esc(r.date)+'</span></div>'+
     '</button>';
   }
 
@@ -568,7 +548,7 @@
     const dirTag = r.dir==='sent' ? 'Referred to' : 'Referred by';
     return '<div class="d-hd"><span class="d-av">'+esc(initials(r.patient.name))+'</span>'+
       '<div class="m"><div class="nm">'+esc(r.patient.name)+'</div><div class="mt">'+esc(r.patient.age)+' yrs · '+esc(r.patient.sex)+' · '+esc(r.condition)+'</div></div></div>'+
-      '<div class="d-status">'+stpill(r.status)+(r.priority&&r.priority!=='routine'?'<span class="prio '+r.priority+'">'+esc(r.priority)+'</span>':'')+(r.status==='completed'&&r.points?'<span class="rpts">'+ICON.star+'+'+r.points+' pts earned</span>':'')+'</div>'+
+      '<div class="d-status">'+stpill(r.status)+(r.priority&&r.priority!=='routine'?'<span class="prio '+r.priority+'">'+esc(r.priority)+'</span>':'')+'</div>'+
 
       '<div class="d-doc"><span class="di" style="overflow:hidden;position:relative">'+ICON.branch+(r.doctor.img?'<img src="'+esc(r.doctor.img)+'" alt="" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">':'')+'</span><div class="m"><div class="who">'+esc(r.doctor.name)+'</div><div class="role">'+dirTag+' · '+esc(r.doctor.spec)+' · '+esc(r.doctor.hosp||'')+'</div></div></div>'+
 
@@ -614,7 +594,7 @@
     }
     if(act==='accept'){ markPrevDone(r); r.status='accepted'; r.timeline.push({label:'Accepted', d:'Just now', note:'You accepted the referral.', state:'now'}); persist(); toast('Referral accepted'); reopen(); }
     else if(act==='decline'){ markPrevDone(r); r.status='declined'; r.timeline.push({label:'Declined', d:'Just now', note:'You declined this referral.', state:'now'}); persist(); toast('Referral declined'); reopen(); }
-    else if(act==='complete'){ markPrevDone(r); r.status='completed'; r.points=POINTS_PER; r.timeline.push({label:'Completed', d:'Just now', note:'Treatment completed. Referral closed.', state:'now'}); persist(); toast('Completed · +'+POINTS_PER+' referral points'); reopen(); }
+    else if(act==='complete'){ markPrevDone(r); r.status='completed'; r.timeline.push({label:'Completed', d:'Just now', note:'Treatment completed. Referral closed.', state:'now'}); persist(); toast('Referral completed'); reopen(); }
     else if(act==='update'){ openUpdate(); }
     else if(act==='cancel'){ markPrevDone(r); r.status='cancelled'; r.timeline.push({label:'Cancelled', d:'Just now', note:'You cancelled this referral before it was accepted.', state:'now'}); persist(); toast('Referral cancelled'); reopen(); }
     else if(act==='changedoc'){ openPicker(); }
@@ -639,7 +619,6 @@
   });
 
   // points card info
-  document.getElementById('ptsCard').addEventListener('click', ()=>toast('You earn +'+POINTS_PER+' points per completed referral'));
 
   // tabs
   document.getElementById('seg').addEventListener('click', e=>{
