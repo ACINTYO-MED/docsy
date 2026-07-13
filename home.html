@@ -36,6 +36,15 @@
   .search input:focus{outline:none;border-color:var(--brand);}
 
   /* profile completion nudge */
+  .reg-remind{display:flex;align-items:center;gap:11px;margin-top:6px;margin-bottom:2px;background:color-mix(in srgb,var(--gold) 12%,var(--card));border:1px solid color-mix(in srgb,var(--gold) 42%,var(--line));border-radius:15px;padding:12px 13px;text-decoration:none;color:inherit;transition:transform .16s;}
+  .reg-remind:active{transform:scale(.99);}
+  .reg-remind .rr-ic{width:34px;height:34px;flex:0 0 auto;border-radius:10px;background:color-mix(in srgb,var(--gold) 20%,transparent);color:var(--gold);display:grid;place-items:center;}
+  .reg-remind .rr-ic svg{width:18px;height:18px;}
+  .reg-remind .rr-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .reg-remind .rr-tx b{font-size:12px;font-weight:800;letter-spacing:-.01em;}
+  .reg-remind .rr-tx span{font-size:10px;color:var(--muted);line-height:1.4;}
+  .reg-remind .rr-chev{color:var(--muted);flex:0 0 auto;display:grid;place-items:center;}
+  .reg-remind .rr-chev svg{width:16px;height:16px;}
   .pcomplete{position:relative;display:flex;align-items:center;gap:13px;margin-top:6px;background:var(--soft2);border:1px solid transparent;border-radius:16px;padding:13px 40px 13px 13px;text-decoration:none;color:inherit;transition:transform .18s, border-color .18s;}
   .pcomplete:hover{border-color:var(--brand);}
   .pcomplete:active{transform:scale(.99);}
@@ -307,6 +316,16 @@
       </button>
       <a class="mewrap" href="profile.html" aria-label="My profile"><img class="me" src="https://randomuser.me/api/portraits/women/79.jpg" alt="Me"></a>
     </div>
+
+    <!-- Registration reconciliation reminder (shows while NMC records differ) -->
+    <a class="reg-remind rise" id="regRemind" href="profile.html" hidden>
+      <span class="rr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg></span>
+      <div class="rr-tx">
+        <b>Reconcile your registration</b>
+        <span>Your details differ from the NMC. Get them corrected at your State Medical Council — tap to review.</span>
+      </div>
+      <span class="rr-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>
+    </a>
 
     <!-- Profile completion nudge (auto-hides at 100% or when dismissed) -->
     <a class="pcomplete rise" id="pcomplete" href="profile.html">
@@ -789,6 +808,20 @@
 
   // ---- Notifications bell (no dedicated page yet → acknowledge with a toast) ----
   document.getElementById('bellBtn').addEventListener('click', ()=>{ location.href='notifications.html'; });
+
+  // Registration reconciliation: persistent banner + once-per-day reminder until records match
+  (function regRemind(){
+    try{
+      const el=document.getElementById('regRemind'); if(!el) return;
+      if(localStorage.getItem('docRegMismatch')!=='1'){ el.hidden=true; return; }
+      el.hidden=false;
+      const today=new Date().toDateString();
+      if(localStorage.getItem('docRegReminderDate')!==today){
+        localStorage.setItem('docRegReminderDate', today);
+        setTimeout(()=>toast('Reminder: reconcile your registration details with your State Medical Council'), 900);
+      }
+    }catch(e){}
+  })();
 
   // ---- Activity detail sheet ----
   const actBackdrop = document.getElementById('actBackdrop');

@@ -107,12 +107,12 @@
     transition:border-color .18s cubic-bezier(.22,1,.36,1);
   }
   .banner .heart{display:none;}   /* decorative watermark removed — calm flat surface */
-  .live{
+  .banner .live{
     display:inline-flex;align-items:center;gap:5px;
     background:rgba(224,106,106,.12);border:1px solid rgba(224,106,106,.28);
     padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800;color:#c0464a;letter-spacing:.03em;
   }
-  .live svg{animation:pulse 1.4s infinite;}
+  .banner .live svg{animation:pulse 1.4s infinite;}
   .banner h2{font-size:19px;font-weight:800;line-height:1.12;margin:10px 0 9px;max-width:80%;}
   .banner .meta{display:flex;gap:14px;font-size:10px;margin-bottom:10px;flex-wrap:wrap;color:var(--muted);}
   .banner .meta span{display:inline-flex;align-items:center;gap:5px;}
@@ -465,6 +465,32 @@
   .tl-bm{color:#cdd1d9;cursor:pointer;flex:0 0 auto;transition:color .15s, transform .15s;}
   .tl-bm:hover{color:var(--brand);transform:scale(1.12);}
   .tl-bm.on{color:var(--brand);}
+  /* View-full-agenda CTA */
+  .fa-open{
+    width:100%;min-height:46px;margin-top:4px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--brand-soft);color:var(--brand);border:1px solid transparent;border-radius:14px;
+    font-family:inherit;font-size:12px;font-weight:800;letter-spacing:-.01em;cursor:pointer;
+    transition:transform .16s, background .16s;
+  }
+  .fa-open:active{transform:scale(.98);}
+  .fa-open .fa-chev{margin-left:2px;}
+  /* Full agenda sheet (multi-day) */
+  .fullag-sheet{max-height:88%;display:flex;flex-direction:column;}
+  .fa-h{font-size:17px;font-weight:800;font-family:var(--display);letter-spacing:-.01em;margin:2px 0 4px;}
+  .fa-hsub{font-size:11px;color:var(--muted);margin-bottom:13px;}
+  .fa-days{display:flex;gap:8px;margin-bottom:15px;flex:0 0 auto;}
+  .fa-day{
+    flex:1;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    padding:6px 4px;border-radius:13px;border:1px solid var(--line);background:var(--card);cursor:pointer;
+    font-family:inherit;transition:transform .16s, background .16s, border-color .16s;
+  }
+  .fa-day:active{transform:scale(.97);}
+  .fa-day .dn{font-size:11.5px;font-weight:800;color:var(--ink);letter-spacing:-.01em;}
+  .fa-day .dd{font-size:9px;color:var(--muted);font-weight:600;}
+  .fa-day.active{background:var(--brand);border-color:var(--brand);}
+  .fa-day.active .dn,.fa-day.active .dd{color:#fff;}
+  .fa-body{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;}
+  .fa-body .timeline{padding-bottom:8px;}
 
   /* ---------- Speaker detail bottom-sheet ---------- */
   .backdrop{
@@ -695,7 +721,7 @@
       </span>
       <h2>Cardiometabolic Update 2025</h2>
       <div class="meta">
-        <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2.5" x2="8" y2="6"/><line x1="16" y1="2.5" x2="16" y2="6"/></svg>24 May 2025</span>
+        <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2.5" x2="8" y2="6"/><line x1="16" y1="2.5" x2="16" y2="6"/></svg><span id="bannerDate">24 May 2025</span></span>
         <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>09:00 AM – 01:30 PM (IST)</span>
       </div>
       <div class="badges">
@@ -727,13 +753,12 @@
 
     <!-- Agenda panel -->
     <div class="agenda" id="agendaPanel" hidden>
-      <div class="agenda-head">
-        <h3>Agenda</h3>
-        <a class="link">View full agenda
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
-        </a>
-      </div>
       <div class="timeline" id="timeline"></div>
+      <button class="fa-open" id="viewFullAgenda" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2.5" x2="8" y2="6"/><line x1="16" y1="2.5" x2="16" y2="6"/></svg>
+        <span class="fa-lbl">View full agenda · 3 days</span>
+        <svg class="fa-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+      </button>
     </div>
 
     <!-- About CME panel (hidden until the About CME tab is selected) -->
@@ -948,6 +973,16 @@
     <div id="netGroups"></div>
   </div>
 
+  <!-- Full agenda (multi-day) sheet -->
+  <div class="backdrop" id="fullAgBackdrop"></div>
+  <div class="sheet fullag-sheet" id="fullAgSheet">
+    <div class="grab"></div>
+    <div class="fa-h">Full Agenda</div>
+    <div class="fa-hsub" id="faHsub">Cardiometabolic Update 2025</div>
+    <div class="fa-days" id="faDays"></div>
+    <div class="fa-body"><div class="timeline" id="faTimeline"></div></div>
+  </div>
+
   <!-- Add past CME form -->
   <div class="backdrop" id="addBackdrop"></div>
   <div class="sheet addcme-sheet" id="addSheet">
@@ -1087,8 +1122,27 @@
   ];
   const bookmark = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17l-6-4-6 4z"/></svg>';
 
-  function renderAgenda(){
-    document.getElementById('timeline').innerHTML = agenda.map((a,i) => `
+  // Multi-day programme — Day 1 reuses the "now" agenda (with the live item)
+  const fullAgenda = [
+    { day:'Day 1', date:'24 May', items: agenda },
+    { day:'Day 2', date:'25 May', items:[
+      { start:'09:00 AM', end:'09:45 AM', title:'Obesity & Metabolic Syndrome',            by:'Dr. Priya Nair',   dur:'45 mins' },
+      { start:'09:45 AM', end:'10:30 AM', title:'CGM & Insulin Optimisation',              by:'Dr. Vijay Menon',  dur:'45 mins' },
+      { start:'10:30 AM', end:'11:15 AM', title:'Heart Failure: Guideline-Directed Therapy',by:'Dr. Arvind Kumar', dur:'45 mins' },
+      { start:'11:30 AM', end:'12:15 PM', title:'Chronic Kidney Disease in Diabetes',       by:'Dr. Meera Iyer',   dur:'45 mins' },
+      { start:'12:15 PM', end:'01:00 PM', title:'Panel: Cardio-Renal-Metabolic Continuum',  by:'All faculty',      dur:'45 mins' },
+    ]},
+    { day:'Day 3', date:'26 May', items:[
+      { start:'09:00 AM', end:'09:45 AM', title:'Lipid Lowering: Beyond Statins',           by:'Dr. Priya Nair',   dur:'45 mins' },
+      { start:'09:45 AM', end:'10:30 AM', title:'Hypertension in Special Populations',      by:'Dr. Rohan Sinha',  dur:'45 mins' },
+      { start:'10:30 AM', end:'11:15 AM', title:'Diabetes Technology & AI',                 by:'Dr. Vijay Menon',  dur:'45 mins' },
+      { start:'11:30 AM', end:'12:30 PM', title:'Interactive Case Clinics',                 by:'All faculty',      dur:'60 mins' },
+      { start:'12:30 PM', end:'01:00 PM', title:'Closing Keynote & Certification',          by:'Dr. Arvind Kumar', dur:'30 mins' },
+    ]},
+  ];
+
+  function timelineHTML(items){
+    return items.map((a,i) => `
       <div class="tl-item rise${a.live?' live':''}" style="animation-delay:${i*60}ms">
         <div class="tl-times"><span class="tl-start">${a.start}</span><span class="tl-end">${a.end}</span></div>
         <div class="tl-rail"><span class="d"></span></div>
@@ -1105,8 +1159,9 @@
         </div>
       </div>
     `).join('');
-    // interactive bookmark toggle (fill on click)
-    document.querySelectorAll('#timeline .tl-bm').forEach(bm=>{
+  }
+  function bindBookmarks(scope){
+    scope.querySelectorAll('.tl-bm').forEach(bm=>{
       bm.addEventListener('click', e=>{
         e.stopPropagation();
         bm.classList.toggle('on');
@@ -1114,6 +1169,55 @@
       });
     });
   }
+  function renderAgenda(){
+    const tl = document.getElementById('timeline');
+    tl.innerHTML = timelineHTML(agenda);
+    bindBookmarks(tl);
+  }
+
+  // ---- Full agenda (multi-day) sheet ----
+  const PROGRAM_YEAR = '2025';
+  // Derive a date range from however many days the programme runs (1, 2 or 3+).
+  // Each day's `date` is "DD Mon"; collapse to "24 May", "24–25 May" or "30 May – 1 Jun".
+  function programDateRange(){
+    const days = fullAgenda;
+    const [d1,m1] = days[0].date.split(' ');
+    if(days.length === 1) return `${d1} ${m1} ${PROGRAM_YEAR}`;
+    const [d2,m2] = days[days.length-1].date.split(' ');
+    return m1 === m2
+      ? `${d1}–${d2} ${m1} ${PROGRAM_YEAR}`
+      : `${d1} ${m1} – ${d2} ${m2} ${PROGRAM_YEAR}`;
+  }
+  (function applyProgramDates(){
+    const range = programDateRange();
+    const n = fullAgenda.length;
+    const bd = document.getElementById('bannerDate'); if(bd) bd.textContent = range;
+    const sub = document.getElementById('faHsub'); if(sub) sub.textContent = `${n} day${n>1?'s':''} · ${range}`;
+    const btn = document.getElementById('viewFullAgenda');
+    if(btn){ const lbl = btn.querySelector('.fa-lbl'); if(lbl) lbl.textContent = `View full agenda · ${n} day${n>1?'s':''}`; }
+  })();
+
+  const fullAgBackdrop = document.getElementById('fullAgBackdrop');
+  const fullAgSheet    = document.getElementById('fullAgSheet');
+  const faDaysEl       = document.getElementById('faDays');
+  const faTimeline     = document.getElementById('faTimeline');
+  let faDay = 0;
+  function renderFaDay(){
+    faDaysEl.innerHTML = fullAgenda.map((d,i)=>`
+      <button class="fa-day${i===faDay?' active':''}" type="button" data-d="${i}">
+        <span class="dn">${d.day}</span><span class="dd">${d.date}</span>
+      </button>`).join('');
+    faDaysEl.querySelectorAll('.fa-day').forEach(b=>{
+      b.addEventListener('click', ()=>{ faDay = +b.dataset.d; renderFaDay(); });
+    });
+    faTimeline.innerHTML = timelineHTML(fullAgenda[faDay].items);
+    bindBookmarks(faTimeline);
+    faTimeline.parentElement.scrollTop = 0;
+  }
+  function openFullAg(){ renderFaDay(); fullAgBackdrop.classList.add('open'); fullAgSheet.classList.add('open'); }
+  function closeFullAg(){ fullAgBackdrop.classList.remove('open'); fullAgSheet.classList.remove('open'); }
+  document.getElementById('viewFullAgenda').addEventListener('click', openFullAg);
+  fullAgBackdrop.addEventListener('click', closeFullAg);
 
   // ---- Tab router: swaps between speaker list / Agenda / About pages ----
   function selectTab(key){
@@ -1704,7 +1808,7 @@
           eb = document.createElement('div');
           eb.className = 'dl-eyebrow';
           eb.style.cssText = 'position:relative;font-size:9px;font-weight:800;letter-spacing:.12em;'
-            + 'text-transform:uppercase;color:var(--onGold);margin:9px 0 -2px;';
+            + 'text-transform:uppercase;color:var(--brand);margin:9px 0 -2px;';
           titleEl.parentNode.insertBefore(eb, titleEl);
         }
         eb.textContent = typeMap[type];
@@ -1721,8 +1825,8 @@
         if(!sb){
           sb = document.createElement('div');
           sb.className = 'dl-sub';
-          sb.style.cssText = 'position:relative;font-size:10px;font-weight:600;color:#fff;'
-            + 'opacity:.85;margin:-3px 0 10px;max-width:72%;line-height:1.4;';
+          sb.style.cssText = 'position:relative;font-size:10px;font-weight:600;color:var(--muted);'
+            + 'margin:-3px 0 10px;max-width:72%;line-height:1.4;';
           titleEl.parentNode.insertBefore(sb, titleEl.nextSibling);
         }
         sb.textContent = decodeURIComponent(sub);
