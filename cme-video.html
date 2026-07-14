@@ -22,12 +22,12 @@
   .p-play:active{transform:scale(.9);} .p-play svg{width:26px;height:26px;}
   .p-play.playing svg.i-play{display:none;} .p-play svg.i-pause{display:none;} .p-play.playing svg.i-pause{display:block;}
   .p-badge{position:absolute;top:12px;right:14px;z-index:1;font-size:8.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.2);padding:4px 9px;border-radius:20px;}
-  /* scrub bar */
-  .p-ctl{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:10px 14px 12px;background:linear-gradient(transparent,rgba(0,0,0,.55));display:flex;align-items:center;gap:10px;}
-  .p-time{font-size:9.5px;font-weight:700;color:#fff;flex:0 0 auto;font-variant-numeric:tabular-nums;}
-  .p-track{flex:1;height:5px;border-radius:5px;background:rgba(255,255,255,.28);cursor:pointer;position:relative;}
-  .p-track i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:#fff;width:0;}
-  .p-track i::after{content:"";position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+  /* live YouTube frame — fills the player once the poster is tapped.
+     (id-based, not class: the YT API swaps the div for an <iframe> that keeps the id but drops the class) */
+  #ytFrame{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:3;background:#000;display:none;}
+  .player.live #ytFrame{display:block;}
+  .player.live .p-topic,.player.live .p-badge,.player.live .p-play{display:none;}
+  .player.live::after{display:none;}
 
   .body{padding:15px 18px 0;}
   .vtitle{font-size:17px;font-weight:800;font-family:var(--display);letter-spacing:-.02em;line-height:1.25;}
@@ -84,18 +84,14 @@
 
   <div class="scroll">
     <!-- player -->
-    <div class="player">
+    <div class="player" id="player">
+      <div id="ytFrame" class="yt"></div>
       <div class="p-topic" id="pTopic"></div>
       <span class="p-badge">On-demand</span>
       <button class="p-play" id="playBtn" aria-label="Play">
         <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5.5v13l11-6.5z"/></svg>
         <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
       </button>
-      <div class="p-ctl">
-        <span class="p-time" id="tCur">0:00</span>
-        <div class="p-track" id="track"><i id="trackFill"></i></div>
-        <span class="p-time" id="tDur">0:00</span>
-      </div>
     </div>
 
     <div class="body">
@@ -132,21 +128,24 @@
   const PROG = qs.get('title') || 'New Frontiers in Diabetes Care';
   const IDX = Math.max(0, parseInt(qs.get('v')||'0',10));
 
+  // `yt` = YouTube video id. These are placeholder demo ids — swap for the real
+  // CME recording ids (or pass ?yt=<id> in the URL to override for the current video).
   const VIDEOS = [
-    {title:'Pathophysiology of Type 2 Diabetes', by:'Dr. Meera Iyer', dur:'12:30', secs:750, cr:0.5,
+    {title:'Pathophysiology of Type 2 Diabetes', by:'Dr. Meera Iyer', dur:'12:30', secs:750, cr:0.5, yt:'jNQXAC9IVRw',
      summary:'This session reviews the core defects that drive type 2 diabetes — insulin resistance in muscle and liver, progressive beta-cell dysfunction, blunted incretin response, and increased overnight hepatic glucose output. It frames why early, mechanism-based therapy changes the long-term trajectory.',
      points:['Insulin resistance can precede hyperglycaemia by 10+ years','Beta-cell function falls ~4% per year after diagnosis','The incretin effect is markedly blunted in T2DM','Rising hepatic glucose output explains high fasting sugars']},
-    {title:'Insulin Titration in Practice', by:'Dr. Arvind Kumar', dur:'15:10', secs:910, cr:0.5,
+    {title:'Insulin Titration in Practice', by:'Dr. Arvind Kumar', dur:'15:10', secs:910, cr:0.5, yt:'jNQXAC9IVRw',
      summary:'A practical, outpatient-focused walk-through of starting and titrating basal insulin: choosing a starting dose, setting fasting-glucose targets, using a simple titration algorithm, and recognising and preventing nocturnal hypoglycaemia.',
      points:['Start basal at 10 U or 0.1–0.2 U/kg/day','Titrate by fasting glucose every 3 days','Target fasting glucose 80–130 mg/dL for most adults','Reduce the titration step if any nocturnal hypo occurs']},
-    {title:'Interpreting CGM Data', by:'Dr. Meera Iyer', dur:'10:45', secs:645, cr:0.5,
+    {title:'Interpreting CGM Data', by:'Dr. Meera Iyer', dur:'10:45', secs:645, cr:0.5, yt:'jNQXAC9IVRw',
      summary:'How to read a continuous glucose monitoring report — Time-in-Range, Glucose Management Indicator, glucose variability and the ambulatory glucose profile — and how to convert those metrics into concrete therapy adjustments.',
      points:['Aim for Time-in-Range above 70%','Keep time-below-range under 4%','GMI approximates the expected HbA1c','Review overnight patterns before daytime ones']},
-    {title:'Cardio-renal Protection in T2DM', by:'Dr. Rohan Sinha', dur:'18:20', secs:1100, cr:1,
+    {title:'Cardio-renal Protection in T2DM', by:'Dr. Rohan Sinha', dur:'18:20', secs:1100, cr:1, yt:'jNQXAC9IVRw',
      summary:'Evidence for SGLT2 inhibitors and GLP-1 receptor agonists in reducing cardiovascular and renal events in type 2 diabetes, with practical guidance on patient selection, baseline checks and combining the two classes.',
      points:['SGLT2 inhibitors reduce heart-failure hospitalisation and CKD progression','GLP-1 receptor agonists reduce major adverse cardiovascular events','Cardio-renal benefits are largely independent of glucose lowering','Check eGFR and volume status before initiation']}
   ];
   const V = VIDEOS[IDX] || VIDEOS[0];
+  const YT_ID = qs.get('yt') || V.yt;
 
   function getAll(){ try{ return JSON.parse(localStorage.getItem('cmeVideoProgress')||'{}'); }catch(e){ return {}; } }
   function getPct(){ const a=getAll(); return (a[PROG]&&a[PROG][IDX])||0; }
@@ -157,8 +156,6 @@
   const shieldIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/><polyline points="9 12 11.5 14.5 15.5 9.5"/></svg>';
   const dotIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
-  function mmss(sec){ sec=Math.max(0,Math.round(sec)); const m=Math.floor(sec/60), s=sec%60; return m+':'+String(s).padStart(2,'0'); }
-
   // fill static content
   document.getElementById('pTopic').textContent = V.title;
   document.getElementById('vtitle').textContent = V.title;
@@ -166,20 +163,16 @@
     `<span>${userIco}${esc(V.by)}</span><span>${clockIco}${esc(V.dur)}</span><span class="cr">${shieldIco}${V.cr} CME</span>`;
   document.getElementById('summary').textContent = V.summary;
   document.getElementById('points').innerHTML = V.points.map(p=>`<div class="pt"><span class="pc">${dotIco}</span><div class="px">${esc(p)}</div></div>`).join('');
-  document.getElementById('tDur').textContent = V.dur;
 
   // playback state
   let pct = getPct();
-  let playing = false, timer = null;
-  const trackFill=document.getElementById('trackFill'), sFill=document.getElementById('sFill'),
-        sPct=document.getElementById('sPct'), tCur=document.getElementById('tCur'),
-        playBtn=document.getElementById('playBtn'), primary=document.getElementById('primary');
+  const sFill=document.getElementById('sFill'), sPct=document.getElementById('sPct'),
+        playBtn=document.getElementById('playBtn'), primary=document.getElementById('primary'),
+        playerEl=document.getElementById('player');
 
   function paint(){
-    trackFill.style.width = pct+'%';
     sFill.style.width = pct+'%';
     sPct.textContent = Math.round(pct)+'%';
-    tCur.textContent = mmss(V.secs*pct/100);
     const done = pct>=100;
     sFill.classList.toggle('full', done);
     sPct.classList.toggle('done', done);
@@ -193,27 +186,64 @@
   let toastT;
   function toast(m){ let el=document.getElementById('toast'); if(!el){ el=document.createElement('div'); el.id='toast'; el.className='toast'; document.querySelector('.phone').appendChild(el);} el.textContent=m; void el.offsetWidth; el.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),1700); }
 
-  function stop(){ playing=false; playBtn.classList.remove('playing'); if(timer){ clearInterval(timer); timer=null; } }
-  function complete(){ pct=100; setPct(100); paint(); stop(); toast('Session complete · +'+V.cr+' CME earned'); }
+  function complete(){ pct=100; setPct(100); paint(); toast('Session complete · +'+V.cr+' CME earned'); }
 
-  function play(){
-    if(pct>=100) return;
-    playing=true; playBtn.classList.add('playing');
-    // accelerated simulated playback (~9s end-to-end) so the flow is demoable
-    timer=setInterval(()=>{
-      pct = Math.min(100, pct + 100/45);
-      setPct(pct); paint();
-      if(pct>=100){ complete(); }
-    }, 200);
+  /* ---- YouTube IFrame Player ---- */
+  let yt = null;          // the YT.Player instance (created on first play)
+  let ready = false;      // API + player ready
+  let poll = null;        // progress polling interval
+
+  // Load the IFrame API once.
+  (function loadYT(){
+    if(window.YT && window.YT.Player) return;
+    const s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api';
+    document.head.appendChild(s);
+  })();
+
+  function startPoll(){
+    if(poll) return;
+    poll=setInterval(()=>{
+      if(!yt || !yt.getDuration) return;
+      const d=yt.getDuration()||0, t=yt.getCurrentTime()||0;
+      if(d>0){
+        const now=Math.min(100, (t/d)*100);
+        if(now>pct){ pct=now; setPct(pct); }        // progress only moves forward
+        paint();
+        if(pct>=99.5) complete();                    // near the end counts as watched
+      }
+    }, 500);
   }
-  playBtn.addEventListener('click', ()=>{ playing ? stop() : play(); });
+  function stopPoll(){ if(poll){ clearInterval(poll); poll=null; } }
 
-  // seek by tapping the track
-  document.getElementById('track').addEventListener('click', e=>{
-    const r=e.currentTarget.getBoundingClientRect();
-    pct = Math.max(0, Math.min(100, ((e.clientX-r.left)/r.width)*100));
-    setPct(pct); paint();
-    if(pct>=100) complete();
+  function createPlayer(){
+    playerEl.classList.add('live');
+    yt=new YT.Player('ytFrame', {
+      videoId: YT_ID,
+      playerVars: { playsinline:1, rel:0, modestbranding:1, controls:1, autoplay:1 },
+      events: {
+        onReady: e=>{ ready=true; e.target.playVideo(); },
+        onStateChange: e=>{
+          const S=YT.PlayerState;
+          if(e.data===S.PLAYING){ playBtn.classList.add('playing'); startPoll(); }
+          else if(e.data===S.PAUSED || e.data===S.BUFFERING){ playBtn.classList.remove('playing'); }
+          else if(e.data===S.ENDED){ playBtn.classList.remove('playing'); stopPoll(); complete(); }
+        }
+      }
+    });
+  }
+
+  // The API calls this global when it finishes loading.
+  window.onYouTubeIframeAPIReady = function(){ if(playerEl.classList.contains('live') && !yt) createPlayer(); };
+
+  playBtn.addEventListener('click', ()=>{
+    if(!yt){
+      // first tap: create the player (or defer until the API is ready)
+      if(window.YT && window.YT.Player) createPlayer();
+      else playerEl.classList.add('live');   // onYouTubeIframeAPIReady will build it
+      return;
+    }
+    if(!ready) return;
+    (yt.getPlayerState()===YT.PlayerState.PLAYING) ? yt.pauseVideo() : yt.playVideo();
   });
 
   primary.addEventListener('click', ()=>{ if(pct<100) complete(); });
